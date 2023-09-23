@@ -7,6 +7,8 @@ option(ENABLE_DOCS "Enable doxygen docs" ON)
 option(PRECOMPILED_HEADERS_ENABLED "Enable generate precompile headers" ON)
 
 add_subdirectory(External)
+find_package(OpenMP REQUIRED)
+
 # just for qt
 # set(CMAKE_AUTOUIC ON)
 # set(CMAKE_AUTOMOC ON)
@@ -39,7 +41,6 @@ if(ENABLE_DOCS)
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../Docs)
   build_docs(PROCESS_DOXYFILE TRUE DOXYFILE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Docs/Doxyfile.in)
 endif()
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT DemoApp)
 
 if(CLANG_FORMAT_EXE)
   message(STATUS "Found clang format ............ Configuring ..............")
