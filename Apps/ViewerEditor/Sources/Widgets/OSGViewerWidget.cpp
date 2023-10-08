@@ -5,6 +5,7 @@
 #include <osg/Image>
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 #include <osgEarth/Registry>
 #include <osgViewer/Viewer>
 #include <osgGA/MultiTouchTrackballManipulator>
@@ -19,7 +20,28 @@ OSGViewerWidget::OSGViewerWidget(QWidget* parent)
 OSGViewerWidget::~OSGViewerWidget()
 {}
 
-void OSGViewerWidget::resizeEvent(QResizeEvent* event) {
+void OSGViewerWidget::slot_import(const QString& path_) {
+    std::string path = path_.toLocal8Bit().constData();
+    osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(path);
+    if (node) {
+        getOsgViewer()->setSceneData(node);
+        getOsgViewer()->home();
+    }
+}
+
+void OSGViewerWidget::slot_export(const QString& path_) {
+    std::string             path = path_.toLocal8Bit().constData();
+    osg::ref_ptr<osg::Node> node = getOsgViewer()->getSceneData();
+
+    if (node) {
+        osg::ref_ptr<osgDB::Options> options = new osgDB::Options;
+        options->setOptionString("OutputTextureFiles");
+        osgDB::writeNodeFile(*node, path, options);
+    }
+}
+
+void OSGViewerWidget::resizeEvent(QResizeEvent* event)
+{
     if (m_floatTools == NULL) {
         m_floatTools = new FloatTools(this);
     }
@@ -28,6 +50,8 @@ void OSGViewerWidget::resizeEvent(QResizeEvent* event) {
 
 void OSGViewerWidget::initConnect() {
     connect(this, &osgQOpenGLWidget::initialized, this, &OSGViewerWidget::init);
+    connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
+    connect(&g_globalSignal, &GLobalSignal::signal_exportMesh, this, &OSGViewerWidget::slot_export);
 
     connect(&g_globalSignal, &GLobalSignal::signal_viewHome, [&]() { 
         getOsgViewer()->home();
@@ -40,13 +64,8 @@ void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
 
-    auto node =
-        osgDB::readNodeFile("D:\\data\\obj\\重建发布_1\\Tile_+005_+003\\Tile_+005_+003.obj");
-    m_root->addChild(node);
-
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     getOsgViewer()->setCameraManipulator(m_cameraManipulator);
-    getOsgViewer()->setSceneData(m_root);
 
     osg::Camera* camera = getOsgViewer()->getCamera();
     camera->setClearColor(

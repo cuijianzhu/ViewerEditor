@@ -1,6 +1,7 @@
 #include "FloatTools.h"
 #include "ui_FloatTools.h"
 #include <QMenu>
+#include <QFileDialog>
 #include "GlobalSignal.h"
 FloatTools::FloatTools(QWidget *parent) :
     QWidget(parent),
@@ -27,5 +28,24 @@ FloatTools::~FloatTools()
 void FloatTools::initConnect() {
     connect(
         ui->actionHome, &QAction::triggered, [](bool) { emit g_globalSignal.signal_viewHome();
+    });
+
+    connect(
+        ui->actionImport, &QAction::triggered, [](bool) { 
+            auto result = QFileDialog::getOpenFileName(nullptr,
+                                                       QString::fromLocal8Bit("打开模型文件"),
+                                                       "",
+                                                       tr("obj file (*.obj)"));
+            if (!result.isEmpty()) {
+                emit g_globalSignal.signal_importMesh(result); 
+            }
+        });
+
+    connect(ui->actionExport, &QAction::triggered, [](bool) {
+        auto result = QFileDialog::getSaveFileName(
+            nullptr, QString::fromLocal8Bit("导出模型文件"), "", tr("obj file (*.obj)"));
+        if (!result.isEmpty()) {
+            emit g_globalSignal.signal_exportMesh(result);
+        }
     });
 }
