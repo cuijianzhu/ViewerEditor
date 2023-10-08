@@ -37,7 +37,7 @@ QToolButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}</s
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>Import mesh</string>
+    <string>导入模型</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
@@ -64,7 +64,7 @@ QToolButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}</s
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Show hole</string>
+    <string>显示孔洞</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
@@ -91,7 +91,7 @@ QToolButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}</s
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Fill hole</string>
+    <string>补洞</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
@@ -118,7 +118,7 @@ QToolButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}</s
     </sizepolicy>
    </property>
    <property name="text">
-    <string>Export mesh</string>
+    <string>导出模型</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
