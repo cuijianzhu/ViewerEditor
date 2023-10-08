@@ -18,6 +18,8 @@ find_package(SARibbon REQUIRED HINTS "D:/ThirdParty/SARibbon/cmake")
 find_package(VCG REQUIRED)
 find_package(OpenSceneGraph 2.0.0 REQUIRED osgViewer osgDB osgUtil osgQt5 osgGA osgEarth osgText)
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
+find_package(VCG REQUIRED)
+find_package (Eigen3 REQUIRED)
 
 # for qt
 # set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR})
@@ -49,6 +51,7 @@ Boost::dynamic_linking
 Boost::thread
 ${OPENSCENEGRAPH_LIBRARIES}
 OpenMP::OpenMP_CXX
+Eigen3::Eigen
 )
 
 target_include_directories(
@@ -56,4 +59,5 @@ target_include_directories(
   PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Sources>
   ${OPENSCENEGRAPH_INCLUDE_DIRS}
+  ${VCG_INCLUDE_DIRS}
 )
