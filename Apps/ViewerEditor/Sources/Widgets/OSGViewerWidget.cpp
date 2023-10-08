@@ -8,11 +8,12 @@
 #include <osgEarth/Registry>
 #include <osgViewer/Viewer>
 #include <osgGA/MultiTouchTrackballManipulator>
+#include "GlobalSignal.h"
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
     setMouseTracking(true);
-    connect(this, &osgQOpenGLWidget::initialized, this, &OSGViewerWidget::init);
+    initConnect();
 }
 
 OSGViewerWidget::~OSGViewerWidget()
@@ -23,6 +24,14 @@ void OSGViewerWidget::resizeEvent(QResizeEvent* event) {
         m_floatTools = new FloatTools(this);
     }
     QOpenGLWidget::resizeEvent(event);
+}
+
+void OSGViewerWidget::initConnect() {
+    connect(this, &osgQOpenGLWidget::initialized, this, &OSGViewerWidget::init);
+
+    connect(&g_globalSignal, &GLobalSignal::signal_viewHome, [&]() { 
+        getOsgViewer()->home();
+    });
 }
 
 

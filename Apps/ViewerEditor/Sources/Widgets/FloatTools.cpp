@@ -1,6 +1,7 @@
 #include "FloatTools.h"
 #include "ui_FloatTools.h"
 #include <QMenu>
+#include "GlobalSignal.h"
 FloatTools::FloatTools(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FloatTools)
@@ -15,9 +16,16 @@ FloatTools::FloatTools(QWidget *parent) :
     QMenu* menuView = new QMenu(this);
     menuView->addAction(ui->actionHome);
     ui->toolButtonView->setMenu(menuView);
+    initConnect();
 }
 
 FloatTools::~FloatTools()
 {
     delete ui;
+}
+
+void FloatTools::initConnect() {
+    connect(
+        ui->actionHome, &QAction::triggered, [](bool) { emit g_globalSignal.signal_viewHome();
+    });
 }

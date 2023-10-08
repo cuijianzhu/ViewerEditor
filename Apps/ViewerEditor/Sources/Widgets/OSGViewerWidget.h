@@ -29,6 +29,8 @@ public slots:
 protected:
     virtual void resizeEvent(QResizeEvent* event) override;
 
+private:
+    void initConnect();
 
 private:
     osg::ref_ptr<osgGA::CameraManipulator> m_cameraManipulator;

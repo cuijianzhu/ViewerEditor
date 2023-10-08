@@ -16,6 +16,9 @@ public:
     ~FloatTools();
 
 private:
+    void initConnect();
+
+private:
     Ui::FloatTools *ui;
 };
 
