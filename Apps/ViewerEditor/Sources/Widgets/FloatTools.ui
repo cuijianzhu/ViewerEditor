@@ -86,7 +86,7 @@ QMenu::separator {
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
   </widget>
-  <widget class="QToolButton" name="toolButtonShowHole">
+  <widget class="QToolButton" name="toolButtonView">
    <property name="geometry">
     <rect>
      <x>170</x>
@@ -102,12 +102,15 @@ QMenu::separator {
     </sizepolicy>
    </property>
    <property name="text">
-    <string>显示孔洞</string>
+    <string>显示</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
-     <normaloff>:/Icons/hole.png</normaloff>
-     <normalon>:/Icons/hole.png</normalon>:/Icons/hole.png</iconset>
+     <normaloff>:/Icons/view.png</normaloff>
+     <normalon>:/Icons/view.png</normalon>:/Icons/view.png</iconset>
+   </property>
+   <property name="popupMode">
+    <enum>QToolButton::InstantPopup</enum>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -156,6 +159,15 @@ QMenu::separator {
    </property>
    <property name="text">
     <string>导出模型</string>
+   </property>
+  </action>
+  <action name="actionHome">
+   <property name="icon">
+    <iconset resource="../../Resources/resources.qrc">
+     <normaloff>:/Icons/reset.png</normaloff>:/Icons/reset.png</iconset>
+   </property>
+   <property name="text">
+    <string>视角重置</string>
    </property>
   </action>
  </widget>
