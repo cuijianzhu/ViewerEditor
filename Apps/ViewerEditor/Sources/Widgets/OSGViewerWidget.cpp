@@ -30,7 +30,18 @@ void OSGViewerWidget::resizeEvent(QResizeEvent* event) {
 void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
+
+    auto node =
+        osgDB::readNodeFile("D:\\data\\obj\\重建发布_1\\Tile_+005_+003\\Tile_+005_+003.obj");
+    m_root->addChild(node);
+
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     getOsgViewer()->setCameraManipulator(m_cameraManipulator);
     getOsgViewer()->setSceneData(m_root);
+
+    osg::Camera* camera = getOsgViewer()->getCamera();
+    camera->setClearColor(
+        osg::Vec4(0.9529411764705882, 0.9529411764705882, 0.9529411764705882, 1.0));
+
+
 }
