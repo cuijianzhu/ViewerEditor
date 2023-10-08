@@ -5,7 +5,7 @@
 #include <osgDB/ReadFile>
 #include <osgEarth/Registry>
 #include <osgViewer/Viewer>
-
+#include <osgGA/MultiTouchTrackballManipulator>
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
@@ -21,5 +21,8 @@ OSGViewerWidget::~OSGViewerWidget()
 
 void OSGViewerWidget::init()
 {
-   
+    m_root = new osg::Group;
+    m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
+    getOsgViewer()->setCameraManipulator(m_cameraManipulator);
+    getOsgViewer()->setSceneData(m_root);
 }
