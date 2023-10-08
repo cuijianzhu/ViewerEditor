@@ -1,4 +1,6 @@
 #include "OSGViewerWidget.h"
+#include "FloatTools.h"
+
 #include <osg/Camera>
 #include <osg/Image>
 #include <osg/PositionAttitudeTransform>
@@ -14,7 +16,13 @@ OSGViewerWidget::OSGViewerWidget(QWidget* parent)
 }
 
 OSGViewerWidget::~OSGViewerWidget()
-{
+{}
+
+void OSGViewerWidget::resizeEvent(QResizeEvent* event) {
+    if (m_floatTools == NULL) {
+        m_floatTools = new FloatTools(this);
+    }
+    QOpenGLWidget::resizeEvent(event);
 }
 
 

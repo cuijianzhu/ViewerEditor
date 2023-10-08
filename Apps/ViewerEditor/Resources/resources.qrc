@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/import.png</file>
+        <file>Icons/hole.png</file>
+        <file>Icons/fill.png</file>
+        <file>Icons/export.png</file>
+    </qresource>
+</RCC>

@@ -13,6 +13,8 @@ namespace osg
 class Group;
 }
 
+class FloatTools;
+
 class OSGViewerWidget : public osgQOpenGLWidget
 {
     Q_OBJECT
@@ -24,9 +26,14 @@ public:
 public slots:
     void init();
 
+protected:
+    virtual void resizeEvent(QResizeEvent* event) override;
+
+
 private:
     osg::ref_ptr<osgGA::CameraManipulator> m_cameraManipulator;
     osg::ref_ptr<osg::Group> m_root;
+    FloatTools*                            m_floatTools;
 };
 
 #endif   // OSGVIEWERWIDGET_H
