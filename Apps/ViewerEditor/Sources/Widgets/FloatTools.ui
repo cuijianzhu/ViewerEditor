@@ -13,6 +13,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolButton{background-color: rgb(225, 225, 225);border:1px groove gray;border-radius:4px;padding:1px 4px;border-style: outset;}
+QToolButton:hover{background-color:rgb(229, 241, 251); color: black;}
+QToolButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}</string>
+  </property>
   <widget class="QToolButton" name="toolButton">
    <property name="geometry">
     <rect>
@@ -27,6 +32,9 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>Import mesh</string>
