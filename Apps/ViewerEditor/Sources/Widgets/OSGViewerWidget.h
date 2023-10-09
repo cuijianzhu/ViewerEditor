@@ -14,7 +14,7 @@ class Group;
 }
 
 class FloatTools;
-
+class Mesh;
 class OSGViewerWidget : public osgQOpenGLWidget
 {
     Q_OBJECT
@@ -37,6 +37,7 @@ private:
 private:
     osg::ref_ptr<osgGA::CameraManipulator> m_cameraManipulator;
     osg::ref_ptr<osg::Group> m_root;
+    osg::ref_ptr<Mesh>                     m_mesh;
     FloatTools*                            m_floatTools;
 };
 

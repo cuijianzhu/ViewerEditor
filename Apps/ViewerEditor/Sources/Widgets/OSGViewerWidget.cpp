@@ -9,7 +9,12 @@
 #include <osgEarth/Registry>
 #include <osgViewer/Viewer>
 #include <osgGA/MultiTouchTrackballManipulator>
+
+#include <wrap/io_trimesh/import.h>
+#include<vcg/complex/algorithms/hole.h>
+
 #include "GlobalSignal.h"
+#include "Mesh/Mesh.h"
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
@@ -22,11 +27,8 @@ OSGViewerWidget::~OSGViewerWidget()
 
 void OSGViewerWidget::slot_import(const QString& path_) {
     std::string path = path_.toLocal8Bit().constData();
-    osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(path);
-    if (node) {
-        getOsgViewer()->setSceneData(node);
-        getOsgViewer()->home();
-    }
+    m_mesh->read(path);
+    getOsgViewer()->home();
 }
 
 void OSGViewerWidget::slot_export(const QString& path_) {
@@ -63,9 +65,11 @@ void OSGViewerWidget::initConnect() {
 void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
-
+    m_mesh              = new Mesh;
+    m_root->addChild(m_mesh);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     getOsgViewer()->setCameraManipulator(m_cameraManipulator);
+    getOsgViewer()->setSceneData(m_root);
 
     osg::Camera* camera = getOsgViewer()->getCamera();
     camera->setClearColor(
