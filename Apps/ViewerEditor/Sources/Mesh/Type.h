@@ -15,7 +15,8 @@ struct MyUsedTypes
 {};
 
 class MyVertex : public vcg::Vertex<MyUsedTypes, vcg::vertex::VFAdj, vcg::vertex::Coord3f,
-                                    vcg::vertex::Normal3f, vcg::vertex::Color4b, vcg::vertex::Mark,
+                         vcg::vertex::Normal3f, vcg::vertex::Color4b, vcg::vertex::Mark,
+                         vcg::vertex::TexCoord2f,
                                     vcg::vertex::Qualityf, vcg::vertex::BitFlags>
 {
 public:

@@ -10,5 +10,6 @@ public:
     void read(const std::string& path_);
     void                         updateOSGNode();
     osg::ref_ptr<osg::Geometry>  m_geometry;
+    std::string                  m_rootDir;
     MyMesh m_mesh;
 };

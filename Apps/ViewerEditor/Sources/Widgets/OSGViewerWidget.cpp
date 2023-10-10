@@ -28,6 +28,10 @@ OSGViewerWidget::~OSGViewerWidget()
 void OSGViewerWidget::slot_import(const QString& path_) {
     std::string path = path_.toLocal8Bit().constData();
     m_mesh->read(path);
+    osg::ref_ptr<osgDB::Options> options = new osgDB::Options;
+    options->setOptionString("WriteImageHint=UseExternal");
+    osgDB::writeNodeFile(*m_mesh, "test.osgt", options.get());
+    osgDB::writeNodeFile(*node, "test1.osgt", options.get());
     getOsgViewer()->home();
 }
 
@@ -68,6 +72,8 @@ void OSGViewerWidget::init()
     m_mesh              = new Mesh;
     m_root->addChild(m_mesh);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
+    auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
+    standardManipulator->setAllowThrow(false);
     getOsgViewer()->setCameraManipulator(m_cameraManipulator);
     getOsgViewer()->setSceneData(m_root);
 
