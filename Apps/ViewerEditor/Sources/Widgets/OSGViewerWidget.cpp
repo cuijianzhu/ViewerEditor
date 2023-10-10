@@ -28,6 +28,7 @@ OSGViewerWidget::~OSGViewerWidget()
 void OSGViewerWidget::slot_import(const QString& path_) {
     std::string path = path_.toLocal8Bit().constData();
     m_mesh->read(path);
+    auto                         node    = osgDB::readNodeFile(path);
     osg::ref_ptr<osgDB::Options> options = new osgDB::Options;
     options->setOptionString("WriteImageHint=UseExternal");
     osgDB::writeNodeFile(*m_mesh, "test.osgt", options.get());

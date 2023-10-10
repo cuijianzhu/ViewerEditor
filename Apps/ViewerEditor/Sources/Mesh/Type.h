@@ -32,7 +32,7 @@ class MyEdge : public vcg::Edge<MyUsedTypes>
 typedef vcg::tri::BasicVertexPair<MyVertex> VertexPair;
 
 class MyFace : public vcg::Face<MyUsedTypes, vcg::face::VFAdj, vcg::face::FFAdj,
-                                vcg::face::Normal3f, vcg::face::VertexRef, vcg::face::BitFlags>
+                                vcg::face::Normal3f, vcg::face::VertexRef, vcg::face::WedgeTexCoord2f, vcg::face::BitFlags>
 {};
 
 // the main mesh class
