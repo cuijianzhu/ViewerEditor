@@ -29,6 +29,7 @@ template<> struct hash<std::pair<float, float>>
 Mesh::Mesh() {}
 
 void Mesh::read(const std::string& path_) {
+    m_mesh.Clear();
     vcg::tri::RequirePerVertexTexCoord(m_mesh);
     vcg::tri::RequirePerFaceWedgeTexCoord(m_mesh);
     vcg::tri::io::Importer<MyMesh>::Open(m_mesh, path_.c_str());
@@ -49,7 +50,7 @@ void Mesh::updateOSGNode()
     std::vector <osg::ref_ptr<osg::Geometry>>        vgeometry;
     std::vector<TexCoordMap>                         vtexcoordMap;
 
-    for (size_t i = 0; i < m_mesh.textures.size(); i++) {
+    for (size_t i = 0; i < 1 || i < m_mesh.textures.size(); i++) {
         osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;
         vtexCoords.push_back(texCoords);
 
@@ -97,17 +98,18 @@ void Mesh::updateOSGNode()
         vgeometry[i]->setVertexArray(vvertices[i]);
         vgeometry[i]->addPrimitiveSet(vdrawElements[i]);
         vgeometry[i]->setTexCoordArray(0, vtexCoords[i]);
+        osg::ref_ptr<osg::StateSet> stateset = vgeometry[i]->getOrCreateStateSet();
 
         // Œ∆¿Ì
-        boost::filesystem::path textPath = boost::filesystem::path(m_rootDir) / m_mesh.textures[i];
-        std::cout << "textPath" << textPath << std::endl;
-        osg::ref_ptr<osg::StateSet> stateset = vgeometry[i]->getOrCreateStateSet();
-        osg::ref_ptr<osg::Image>            image   = osgDB::readImageFile(textPath.generic_path().generic_string());
-        std::string outputimgPath = "testoutput" + std::to_string(i) + ".jpg";
-
-        osgDB::writeImageFile(*image, outputimgPath);
-        osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
-        stateset->setTextureAttributeAndModes(0, texture);
+        if (m_mesh.textures.size()!=0) {
+            boost::filesystem::path textPath =
+                boost::filesystem::path(m_rootDir) / m_mesh.textures[i];
+            osg::ref_ptr<osg::Image>    image =
+                osgDB::readImageFile(textPath.generic_path().generic_string());
+            osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
+            stateset->setTextureAttributeAndModes(0, texture);
+        }
+        
         // ≤ƒ÷ 
         osg::ref_ptr<osg::Material> osg_material = new osg::Material;
         stateset->setAttribute(osg_material);
@@ -116,10 +118,6 @@ void Mesh::updateOSGNode()
         osg_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
         osg::ref_ptr<osg::Geode> geode = new osg::Geode;
         geode->addDrawable(vgeometry[i]);
-        std::string outputPath = "testoutput" + std::to_string(i) + ".osgb";
-        std::string outputOBJPath = "testoutput" + std::to_string(i) + ".obj";
-        osgDB::writeNodeFile(*geode, outputPath);
-        osgDB::writeNodeFile(*geode, outputOBJPath);
         addChild(geode);
     }
 }

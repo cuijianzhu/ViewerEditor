@@ -26,8 +26,12 @@ OSGViewerWidget::~OSGViewerWidget()
 {}
 
 void OSGViewerWidget::slot_import(const QString& path_) {
+    m_root->removeChild(m_mesh);
+    m_mesh.release();
+    m_mesh           = new Mesh;
     std::string path = path_.toLocal8Bit().constData();
     m_mesh->read(path);
+    m_root->addChild(m_mesh);
     getOsgViewer()->home();
 }
 
