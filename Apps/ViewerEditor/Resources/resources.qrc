@@ -1,11 +1,13 @@
 <RCC>
-    <qresource prefix="/">
-        <file>Icons/import.png</file>
-        <file>Icons/hole.png</file>
-        <file>Icons/fill.png</file>
-        <file>Icons/export.png</file>
-        <file>Icons/file.png</file>
-        <file>Icons/view.png</file>
-        <file>Icons/reset.png</file>
-    </qresource>
+  <qresource prefix="/">
+    <file>Icons/Select.png</file>
+    <file>Icons/edit.png</file>
+    <file>Icons/import.png</file>
+    <file>Icons/hole.png</file>
+    <file>Icons/fill.png</file>
+    <file>Icons/export.png</file>
+    <file>Icons/file.png</file>
+    <file>Icons/view.png</file>
+    <file>Icons/reset.png</file>
+  </qresource>
 </RCC>

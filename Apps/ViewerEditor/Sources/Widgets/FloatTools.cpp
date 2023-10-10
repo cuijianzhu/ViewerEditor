@@ -17,6 +17,10 @@ FloatTools::FloatTools(QWidget *parent) :
     QMenu* menuView = new QMenu(this);
     menuView->addAction(ui->actionHome);
     ui->toolButtonView->setMenu(menuView);
+
+    QMenu* menuEdit = new QMenu(this);
+    menuEdit->addAction(ui->actionSelect);
+    ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
 

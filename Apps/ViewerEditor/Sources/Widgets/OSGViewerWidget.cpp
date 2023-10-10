@@ -46,6 +46,15 @@ void OSGViewerWidget::slot_export(const QString& path_) {
     }
 }
 
+void OSGViewerWidget::slot_pickFace() {
+    auto camera = getOsgViewer()->getCamera();
+    auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
+           camera->getViewport()->computeWindowMatrix();
+    vcg::Point3          p(0, 0, 0);
+    vcg::Matrix33<float> vcg_vpmMatrix;
+    auto                 aaa = vcg_vpmMatrix * p;
+}
+
 void OSGViewerWidget::resizeEvent(QResizeEvent* event)
 {
     if (m_floatTools == NULL) {
@@ -63,8 +72,6 @@ void OSGViewerWidget::initConnect() {
         getOsgViewer()->home();
     });
 }
-
-
 
 void OSGViewerWidget::init()
 {

@@ -122,7 +122,7 @@ QMenu::separator {
     <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
   </widget>
-  <widget class="QToolButton" name="toolButtonFillHole">
+  <widget class="QToolButton" name="toolButtonEdit">
    <property name="geometry">
     <rect>
      <x>330</x>
@@ -141,12 +141,15 @@ QMenu::separator {
     <enum>Qt::NoFocus</enum>
    </property>
    <property name="text">
-    <string>补洞</string>
+    <string>编辑</string>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/resources.qrc">
-     <normaloff>:/Icons/fill.png</normaloff>
-     <normalon>:/Icons/fill.png</normalon>:/Icons/fill.png</iconset>
+     <normaloff>:/Icons/edit.png</normaloff>
+     <normalon>:/Icons/edit.png</normalon>:/Icons/edit.png</iconset>
+   </property>
+   <property name="popupMode">
+    <enum>QToolButton::InstantPopup</enum>
    </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -177,6 +180,15 @@ QMenu::separator {
    </property>
    <property name="text">
     <string>视角重置</string>
+   </property>
+  </action>
+  <action name="actionSelect">
+   <property name="icon">
+    <iconset resource="../../Resources/resources.qrc">
+     <normaloff>:/Icons/Select.png</normaloff>:/Icons/Select.png</iconset>
+   </property>
+   <property name="text">
+    <string>选择</string>
    </property>
   </action>
  </widget>

@@ -27,6 +27,7 @@ public slots:
     void init();
     void slot_import(const QString& path_);
     void slot_export(const QString& path_);
+    void slot_pickFace();
 
 protected:
     virtual void resizeEvent(QResizeEvent* event) override;
