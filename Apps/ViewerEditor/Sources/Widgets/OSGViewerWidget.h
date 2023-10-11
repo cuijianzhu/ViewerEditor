@@ -2,6 +2,7 @@
 #define OSGVIEWERWIDGET_H
 
 #include <osgQOpenGL/osgQOpenGLWidget>
+#include <QPoint>
 #include <osg/ref_ptr>
 namespace osgGA
 {
@@ -16,6 +17,7 @@ class Group;
 class FloatTools;
 class Mesh;
 class KeyHandler;
+class QRubberBand;
 
 class OSGViewerWidget : public osgQOpenGLWidget
 {
@@ -32,14 +34,14 @@ public slots:
     void slot_pickFace(bool);
 
 protected:
-    virtual void resizeEvent(QResizeEvent* event) override;
-    void         keyPressEvent(QKeyEvent* event) override;
-    void         keyReleaseEvent(QKeyEvent* event) override;
-    void         mousePressEvent(QMouseEvent* event) override;
-    void         mouseReleaseEvent(QMouseEvent* event) override;
-    void         mouseDoubleClickEvent(QMouseEvent* event) override;
-    void         mouseMoveEvent(QMouseEvent* event) override;
-    void         wheelEvent(QWheelEvent* event) override;
+    virtual   void    resizeEvent(QResizeEvent* event) override;
+    virtual   void    keyPressEvent(QKeyEvent* event) override;
+    virtual   void    keyReleaseEvent(QKeyEvent* event) override;
+    virtual   void    mousePressEvent(QMouseEvent* event) override;
+    virtual   void    mouseReleaseEvent(QMouseEvent* event) override;
+    virtual   void    mouseDoubleClickEvent(QMouseEvent* event) override;
+    virtual   void    mouseMoveEvent(QMouseEvent* event) override;
+    virtual   void    wheelEvent(QWheelEvent* event) override;
 
 private:
     void initConnect();
@@ -50,6 +52,9 @@ private:
     osg::ref_ptr<Mesh>                     m_mesh;
     osg::ref_ptr<KeyHandler>               m_keyHandler;
     FloatTools*                            m_floatTools;
+    QRubberBand*                           m_rubberBand;
+    QPoint                                 m_origin;
+    bool                                   m_isSelecting = false;
 };
 
 #endif   // OSGVIEWERWIDGET_H

@@ -14,6 +14,8 @@
 #include<vcg/complex/algorithms/hole.h>
 
 #include <QRubberBand>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 #include "GlobalSignal.h"
 #include "Mesh/Mesh.h"
@@ -23,6 +25,9 @@ OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
     setMouseTracking(true);
+    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
+    m_floatTools = new FloatTools(this);
+
     initConnect();
 }
 
@@ -53,6 +58,7 @@ void OSGViewerWidget::slot_export(const QString& path_) {
 void OSGViewerWidget::slot_pickFace(bool checked) {
     if (checked) {
         m_keyHandler->isStop = true;
+        m_isSelecting        = true;
         auto camera          = getOsgViewer()->getCamera();
         auto keyhandler      = new KeyHandler();
 
@@ -64,20 +70,19 @@ void OSGViewerWidget::slot_pickFace(bool checked) {
     }
     else {
         m_keyHandler->isStop = false;
+        m_isSelecting        = false;
     }
     
 }
 
 void OSGViewerWidget::resizeEvent(QResizeEvent* event)
 {
-    if (m_floatTools == NULL) {
-        m_floatTools = new FloatTools(this);
-    }
     QOpenGLWidget::resizeEvent(event);
 }
 
 void OSGViewerWidget::keyPressEvent(QKeyEvent* event) {
     osgQOpenGLWidget::keyPressEvent(event);
+    
 }
 
 void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
@@ -86,10 +91,19 @@ void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
 
 void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mousePressEvent(event);
+    if (m_isSelecting) {
+        m_origin = event->pos();
+        if (!m_rubberBand) m_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+        m_rubberBand->setGeometry(QRect(m_origin, QSize()));
+        m_rubberBand->show();
+    }
 }
 
 void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseReleaseEvent(event);
+    if (m_isSelecting) {
+        m_rubberBand->hide();
+    }
 }
 
 void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
@@ -98,6 +112,9 @@ void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseMoveEvent(event);
+    if (m_isSelecting) {
+        m_rubberBand->setGeometry(QRect(m_origin, event->pos()).normalized());
+    }
 }
 
 void OSGViewerWidget::wheelEvent(QWheelEvent* event) {
