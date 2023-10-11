@@ -190,6 +190,9 @@ QMenu::separator {
    <property name="text">
     <string>选择</string>
    </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
   </action>
  </widget>
  <resources>
