@@ -56,6 +56,7 @@ private:
     FloatTools*                            m_floatTools;
     QRubberBand*                           m_rubberBand;
     QPoint                                 m_origin;
+    bool                                   m_isPress = false;
 
 };
 

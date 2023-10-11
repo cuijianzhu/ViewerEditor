@@ -62,12 +62,6 @@ void OSGViewerWidget::slot_export(const QString& path_) {
 void OSGViewerWidget::slot_pickFace(bool checked) {
     if (checked) {
         m_statusHandler->isSelecting = true;
-        auto camera          = getOsgViewer()->getCamera();
-        auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
-                         camera->getViewport()->computeWindowMatrix();
-        vcg::Point3          p(0, 0, 0);
-        vcg::Matrix33<float> vcg_vpmMatrix;
-        auto                 aaa = vcg_vpmMatrix * p;
     }
     else {
         m_statusHandler->isSelecting = false;
@@ -82,7 +76,6 @@ void OSGViewerWidget::resizeEvent(QResizeEvent* event)
 
 void OSGViewerWidget::keyPressEvent(QKeyEvent* event) {
     osgQOpenGLWidget::keyPressEvent(event);
-    
 }
 
 void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
@@ -91,6 +84,7 @@ void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
 
 void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mousePressEvent(event);
+    m_isPress = true;
     if (m_statusHandler->isSelecting) {
         m_origin = event->pos();
         if (!m_rubberBand) m_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
@@ -101,8 +95,10 @@ void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseReleaseEvent(event);
+    m_isPress = false;
     if (m_statusHandler->isSelecting) {
         m_rubberBand->hide();
+        m_rubberBand->setGeometry(0,0, 0,0);
     }
 }
 
@@ -112,8 +108,30 @@ void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseMoveEvent(event);
-    if (m_statusHandler->isSelecting) {
-        m_rubberBand->setGeometry(QRect(m_origin, event->pos()).normalized());
+    if (m_statusHandler->isSelecting && m_isPress) {
+        auto rect = QRect(m_origin, event->pos()).normalized();
+        
+        if (rect.size().height() < 20) return;
+        m_rubberBand->setGeometry(rect);
+
+        auto camera    = getOsgViewer()->getCamera();
+        auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
+                         camera->getViewport()->computeWindowMatrix();
+        vcg::Matrix33f vcg_vpmmatrix;
+        for (size_t i = 0; i < 3; i++) {
+            for (size_t j = 0; j < 3; j++) {
+                vcg_vpmmatrix[i][j] = vpmMatrix(i, j);
+            }
+        }
+        vcg::Box3<MyMesh::ScalarType> reg;
+        auto                          bottomLeft = rect.bottomLeft();
+        auto                          topRight   = rect.topRight();
+        std::cout << "bottomLeft: " << bottomLeft.x() << " " << bottomLeft.y() << std::endl;
+        std::cout << "topRight: " << topRight.x() << " " << topRight.y() << std::endl;
+        reg.Add(MyMesh::CoordType(bottomLeft.x(), bottomLeft.y(), MyMesh::ScalarType(-1.0)));
+        reg.Add(MyMesh::CoordType(topRight.x(), topRight.y(), MyMesh::ScalarType(1.0)));
+
+        m_mesh->rectanglePick(reg, vpmMatrix);
     }
 }
 
@@ -139,7 +157,6 @@ void OSGViewerWidget::init()
     m_selectingLayer = new SelectingLayer;
     m_statusHandler = new StatusHandler(m_selectingLayer);
     m_root->addChild(m_mesh);
-    //m_root->addChild(m_selectingLayer);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
     standardManipulator->setAllowThrow(false);

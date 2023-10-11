@@ -14,6 +14,7 @@ public:
     ~SelectingLayer() = default;
     void updateGeometry();
     void setupMesh(osg::ref_ptr<Mesh>);
+    osg::ref_ptr<Mesh> m_mesh;
 
 private:
     void initFilled();
@@ -25,5 +26,4 @@ private:
     osg::ref_ptr<osg::Geometry> m_geometry;
     osg::ref_ptr<osg::DrawArrays> m_drawArray;
     osg::ref_ptr<osg::Vec3Array>  m_vec3Array;
-    osg::ref_ptr<Mesh>            m_mesh;
 };
