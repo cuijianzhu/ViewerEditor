@@ -13,8 +13,12 @@
 #include <wrap/io_trimesh/import.h>
 #include<vcg/complex/algorithms/hole.h>
 
+#include <QRubberBand>
+
 #include "GlobalSignal.h"
 #include "Mesh/Mesh.h"
+
+#include "Events/KeyHandler.h"
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
@@ -46,13 +50,22 @@ void OSGViewerWidget::slot_export(const QString& path_) {
     }
 }
 
-void OSGViewerWidget::slot_pickFace() {
-    auto camera = getOsgViewer()->getCamera();
-    auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
-           camera->getViewport()->computeWindowMatrix();
-    vcg::Point3          p(0, 0, 0);
-    vcg::Matrix33<float> vcg_vpmMatrix;
-    auto                 aaa = vcg_vpmMatrix * p;
+void OSGViewerWidget::slot_pickFace(bool checked) {
+    if (checked) {
+        m_keyHandler->isStop = true;
+        auto camera          = getOsgViewer()->getCamera();
+        auto keyhandler      = new KeyHandler();
+
+        auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
+                         camera->getViewport()->computeWindowMatrix();
+        vcg::Point3          p(0, 0, 0);
+        vcg::Matrix33<float> vcg_vpmMatrix;
+        auto                 aaa = vcg_vpmMatrix * p;
+    }
+    else {
+        m_keyHandler->isStop = false;
+    }
+    
 }
 
 void OSGViewerWidget::resizeEvent(QResizeEvent* event)
@@ -67,6 +80,7 @@ void OSGViewerWidget::initConnect() {
     connect(this, &osgQOpenGLWidget::initialized, this, &OSGViewerWidget::init);
     connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
     connect(&g_globalSignal, &GLobalSignal::signal_exportMesh, this, &OSGViewerWidget::slot_export);
+    connect(&g_globalSignal, &GLobalSignal::signal_select, this, &OSGViewerWidget::slot_pickFace);
 
     connect(&g_globalSignal, &GLobalSignal::signal_viewHome, [&]() { 
         getOsgViewer()->home();
@@ -77,6 +91,7 @@ void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
     m_mesh              = new Mesh;
+    m_keyHandler = new KeyHandler;
     m_root->addChild(m_mesh);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
@@ -88,5 +103,5 @@ void OSGViewerWidget::init()
     camera->setClearColor(
         osg::Vec4(0.9529411764705882, 0.9529411764705882, 0.9529411764705882, 1.0));
 
-
+    getOsgViewer()->addEventHandler(m_keyHandler);
 }

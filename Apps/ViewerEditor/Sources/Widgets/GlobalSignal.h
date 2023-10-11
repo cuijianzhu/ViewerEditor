@@ -11,6 +11,7 @@ Q_SIGNALS:
     void signal_viewHome();
     void signal_importMesh(const QString& path_);
     void signal_exportMesh(const QString& path_);
+    void signal_select(bool);
 
 };
 
