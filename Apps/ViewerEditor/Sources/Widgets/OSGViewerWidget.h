@@ -16,7 +16,7 @@ class Group;
 
 class FloatTools;
 class Mesh;
-class KeyHandler;
+class StatusHandler;
 class QRubberBand;
 
 class OSGViewerWidget : public osgQOpenGLWidget
@@ -50,11 +50,10 @@ private:
     osg::ref_ptr<osgGA::CameraManipulator> m_cameraManipulator;
     osg::ref_ptr<osg::Group> m_root;
     osg::ref_ptr<Mesh>                     m_mesh;
-    osg::ref_ptr<KeyHandler>               m_keyHandler;
+    osg::ref_ptr<StatusHandler>            m_statusHandler;
     FloatTools*                            m_floatTools;
     QRubberBand*                           m_rubberBand;
     QPoint                                 m_origin;
-    bool                                   m_isSelecting = false;
 };
 
 #endif   // OSGVIEWERWIDGET_H

@@ -1,12 +1,12 @@
 #pragma once
 #include <osgGA/GUIEventHandler>
 
-class KeyHandler : public osgGA::GUIEventHandler
+class StatusHandler : public osgGA::GUIEventHandler
 {
 private:
 public:
-    KeyHandler() = default;
+    StatusHandler() = default;
     virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
-    ~KeyHandler() = default;
-    bool isStop   = false;
+    ~StatusHandler() = default;
+    bool isSelecting   = false;
 };

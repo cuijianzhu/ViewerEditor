@@ -20,7 +20,7 @@
 #include "GlobalSignal.h"
 #include "Mesh/Mesh.h"
 
-#include "Events/KeyHandler.h"
+#include "Events/StatusHandler.h"
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
@@ -57,11 +57,8 @@ void OSGViewerWidget::slot_export(const QString& path_) {
 
 void OSGViewerWidget::slot_pickFace(bool checked) {
     if (checked) {
-        m_keyHandler->isStop = true;
-        m_isSelecting        = true;
+        m_statusHandler->isSelecting = true;
         auto camera          = getOsgViewer()->getCamera();
-        auto keyhandler      = new KeyHandler();
-
         auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
                          camera->getViewport()->computeWindowMatrix();
         vcg::Point3          p(0, 0, 0);
@@ -69,8 +66,7 @@ void OSGViewerWidget::slot_pickFace(bool checked) {
         auto                 aaa = vcg_vpmMatrix * p;
     }
     else {
-        m_keyHandler->isStop = false;
-        m_isSelecting        = false;
+        m_statusHandler->isSelecting = false;
     }
     
 }
@@ -91,7 +87,7 @@ void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
 
 void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mousePressEvent(event);
-    if (m_isSelecting) {
+    if (m_statusHandler->isSelecting) {
         m_origin = event->pos();
         if (!m_rubberBand) m_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
         m_rubberBand->setGeometry(QRect(m_origin, QSize()));
@@ -101,7 +97,7 @@ void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseReleaseEvent(event);
-    if (m_isSelecting) {
+    if (m_statusHandler->isSelecting) {
         m_rubberBand->hide();
     }
 }
@@ -112,7 +108,7 @@ void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseMoveEvent(event);
-    if (m_isSelecting) {
+    if (m_statusHandler->isSelecting) {
         m_rubberBand->setGeometry(QRect(m_origin, event->pos()).normalized());
     }
 }
@@ -136,7 +132,7 @@ void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
     m_mesh              = new Mesh;
-    m_keyHandler = new KeyHandler;
+    m_statusHandler = new StatusHandler;
     m_root->addChild(m_mesh);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
@@ -148,5 +144,5 @@ void OSGViewerWidget::init()
     camera->setClearColor(
         osg::Vec4(0.9529411764705882, 0.9529411764705882, 0.9529411764705882, 1.0));
 
-    getOsgViewer()->addEventHandler(m_keyHandler);
+    getOsgViewer()->addEventHandler(m_statusHandler);
 }
