@@ -42,6 +42,8 @@ void OSGViewerWidget::slot_import(const QString& path_) {
     m_mesh           = new Mesh;
     std::string path = path_.toLocal8Bit().constData();
     m_mesh->read(path);
+    m_selectingLayer->setupMesh(m_mesh);
+    m_mesh->addChild(m_selectingLayer);
     m_root->addChild(m_mesh);
     getOsgViewer()->home();
 }
@@ -135,9 +137,9 @@ void OSGViewerWidget::init()
     m_root = new osg::Group;
     m_mesh              = new Mesh;
     m_selectingLayer = new SelectingLayer;
-    m_statusHandler = new StatusHandler;
+    m_statusHandler = new StatusHandler(m_selectingLayer);
     m_root->addChild(m_mesh);
-    m_root->addChild(m_selectingLayer);
+    //m_root->addChild(m_selectingLayer);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
     standardManipulator->setAllowThrow(false);

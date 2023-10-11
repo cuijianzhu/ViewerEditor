@@ -5,9 +5,18 @@
 #include <osg/BlendFunc>
 #include <osg/LineWidth>
 #include <osgDB/ReadFile>
-SelectingLayer::SelectingLayer() {
+#include <osg/Geometry>
+#include <osg/Array>
+#include <Mesh/Mesh.h>
+
+SelectingLayer::SelectingLayer()
+{
     m_filled = new osg::Group;
     m_wireframe = new osg::Group;
+    m_geometry  = new osg::Geometry;
+    m_drawArray = new osg::DrawArrays(GL_TRIANGLES, 0, 0);
+    m_vec3Array = new osg::Vec3Array;
+    initGeometry();
     initFilled();
     initWireFrame();
     addChild(m_filled);
@@ -28,13 +37,13 @@ void SelectingLayer::initFilled() {
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
     osg::Material* material = new osg::Material;
-    float          alpha    = 0.1f;
+    float          alpha    = 0.5f;
     material->setColorMode(osg::Material::OFF);
-    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 0.64f, 0.0f, alpha));
-    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 0.64f, 0.0f, alpha));
-    material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 0.64f, 0.0f, alpha));
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.392, 0.784, 0.196, alpha));
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.392, 0.784, 0.196, alpha));
+    material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.392, 0.784, 0.196, alpha));
     // except emission... in which we set the color we desire
-    material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0, 0.64f, 0.0f, alpha));
+    material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.392, 0.784, 0.196, alpha));
     stateset->setAttributeAndModes(material,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
@@ -45,6 +54,7 @@ void SelectingLayer::initFilled() {
     osg::BlendFunc* blend = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     stateset->setAttributeAndModes(blend, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_filled->setStateSet(stateset);
+    m_filled->addChild(m_geometry);
 }
 
 void SelectingLayer::initWireFrame() {
@@ -80,4 +90,30 @@ void SelectingLayer::initWireFrame() {
     stateset->setAttributeAndModes(lineWidth,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_wireframe->setStateSet(stateset);
+    m_wireframe->addChild(m_geometry);
+}
+
+void SelectingLayer::initGeometry() {
+    m_geometry->setVertexArray(m_vec3Array);
+    m_geometry->addPrimitiveSet(m_drawArray);
+}
+
+void SelectingLayer::updateGeometry() {
+    if (!m_mesh) return;
+    m_vec3Array->clear();
+    for (auto& f : m_mesh->m_mesh.face) {
+        if (f.IsS()) {
+            for (size_t i = 0; i < 3; i++) {
+                auto& p = f.V(i)->P();
+                m_vec3Array->push_back({p.X(), p.Y(), p.Z()});
+            }
+        }
+    }
+    m_drawArray->setCount(m_vec3Array->size());
+    m_vec3Array->dirty();
+    m_geometry->dirtyDisplayList();
+}
+
+void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_) {
+    m_mesh = mesh_;
 }
