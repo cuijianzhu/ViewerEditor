@@ -76,6 +76,34 @@ void OSGViewerWidget::resizeEvent(QResizeEvent* event)
     QOpenGLWidget::resizeEvent(event);
 }
 
+void OSGViewerWidget::keyPressEvent(QKeyEvent* event) {
+    osgQOpenGLWidget::keyPressEvent(event);
+}
+
+void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
+    osgQOpenGLWidget::keyReleaseEvent(event);
+}
+
+void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
+    osgQOpenGLWidget::mousePressEvent(event);
+}
+
+void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
+    osgQOpenGLWidget::mouseReleaseEvent(event);
+}
+
+void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
+    osgQOpenGLWidget::mouseDoubleClickEvent(event);
+}
+
+void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
+    osgQOpenGLWidget::mouseMoveEvent(event);
+}
+
+void OSGViewerWidget::wheelEvent(QWheelEvent* event) {
+    osgQOpenGLWidget::wheelEvent(event);
+}
+
 void OSGViewerWidget::initConnect() {
     connect(this, &osgQOpenGLWidget::initialized, this, &OSGViewerWidget::init);
     connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
