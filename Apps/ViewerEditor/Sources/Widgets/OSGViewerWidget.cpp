@@ -21,6 +21,8 @@
 #include "Mesh/Mesh.h"
 
 #include "Events/StatusHandler.h"
+#include "Layers/SelectingLayer.h"
+
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
@@ -132,8 +134,10 @@ void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
     m_mesh              = new Mesh;
+    m_selectingLayer = new SelectingLayer;
     m_statusHandler = new StatusHandler;
     m_root->addChild(m_mesh);
+    m_root->addChild(m_selectingLayer);
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
     standardManipulator->setAllowThrow(false);
