@@ -110,8 +110,6 @@ void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseMoveEvent(event);
     if (m_statusHandler->isSelecting && m_isPress) {
         auto rect = QRect(m_origin, event->pos()).normalized();
-        
-        if (rect.size().height() < 20) return;
         m_rubberBand->setGeometry(rect);
 
         auto camera    = getOsgViewer()->getCamera();
@@ -126,10 +124,8 @@ void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
         vcg::Box3<MyMesh::ScalarType> reg;
         auto                          bottomLeft = rect.bottomLeft();
         auto                          topRight   = rect.topRight();
-        std::cout << "bottomLeft: " << bottomLeft.x() << " " << bottomLeft.y() << std::endl;
-        std::cout << "topRight: " << topRight.x() << " " << topRight.y() << std::endl;
-        reg.Add(MyMesh::CoordType(bottomLeft.x(), bottomLeft.y(), MyMesh::ScalarType(-1.0)));
-        reg.Add(MyMesh::CoordType(topRight.x(), topRight.y(), MyMesh::ScalarType(1.0)));
+        reg.Add(MyMesh::CoordType(bottomLeft.x(), height() - bottomLeft.y(), MyMesh::ScalarType(-1.0)));
+        reg.Add(MyMesh::CoordType(topRight.x(), height() - topRight.y(), MyMesh::ScalarType(1.0)));
 
         m_mesh->rectanglePick(reg, vpmMatrix);
     }
