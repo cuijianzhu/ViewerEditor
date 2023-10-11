@@ -11,8 +11,8 @@
 
 SelectingLayer::SelectingLayer()
 {
-    m_filled = new osg::Group;
-    m_wireframe = new osg::Group;
+    m_filled = new osg::Geode;
+    m_wireframe = new osg::Geode;
     m_geometry  = new osg::Geometry;
     m_drawArray = new osg::DrawArrays(GL_TRIANGLES, 0, 0);
     m_vec3Array = new osg::Vec3Array;
@@ -54,7 +54,7 @@ void SelectingLayer::initFilled() {
     osg::BlendFunc* blend = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     stateset->setAttributeAndModes(blend, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_filled->setStateSet(stateset);
-    m_filled->addChild(m_geometry);
+    m_filled->addDrawable(m_geometry);
 }
 
 void SelectingLayer::initWireFrame() {
@@ -90,7 +90,7 @@ void SelectingLayer::initWireFrame() {
     stateset->setAttributeAndModes(lineWidth,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_wireframe->setStateSet(stateset);
-    m_wireframe->addChild(m_geometry);
+    m_wireframe->addDrawable(m_geometry);
 }
 
 void SelectingLayer::initGeometry() {
@@ -102,7 +102,7 @@ void SelectingLayer::updateGeometry() {
     if (!m_mesh) return;
     m_vec3Array->clear();
     for (auto& f : m_mesh->m_mesh.face) {
-        if (f.IsS()) {
+        if (f.IsS()&&!f.IsD()) {
             for (size_t i = 0; i < 3; i++) {
                 auto& p = f.V(i)->P();
                 m_vec3Array->push_back({p.X(), p.Y(), p.Z()});

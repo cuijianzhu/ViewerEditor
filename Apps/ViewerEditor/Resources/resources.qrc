@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>Icons/deleteface.png</file>
     <file>Icons/Select.png</file>
     <file>Icons/edit.png</file>
     <file>Icons/import.png</file>

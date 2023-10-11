@@ -11,6 +11,7 @@ public:
     void read(const std::string& path_);
     void rectanglePick(vcg::Box3<MyMesh::ScalarType> box_, osg::Matrix vpmMatrix_, bool isInvertSelection_);
     void                         updateOSGNode();
+    void                         deleteFace();
     osg::ref_ptr<osg::Geometry>  m_geometry;
     std::string                  m_rootDir;
     MyMesh m_mesh;

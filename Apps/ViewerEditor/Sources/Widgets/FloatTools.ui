@@ -197,6 +197,18 @@ QMenu::separator {
     <string>S</string>
    </property>
   </action>
+  <action name="actiondeleteFace">
+   <property name="icon">
+    <iconset resource="../../Resources/resources.qrc">
+     <normaloff>:/Icons/deleteface.png</normaloff>:/Icons/deleteface.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除面</string>
+   </property>
+   <property name="shortcut">
+    <string>D</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

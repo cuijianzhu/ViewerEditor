@@ -21,6 +21,7 @@ FloatTools::FloatTools(QWidget *parent) :
     QMenu* menuEdit = new QMenu(this);
     ui->actionSelect->setCheckable(true);
     menuEdit->addAction(ui->actionSelect);
+    menuEdit->addAction(ui->actiondeleteFace);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -37,6 +38,9 @@ void FloatTools::initConnect() {
 
     connect(ui->actionSelect, &QAction::triggered, [](bool checked) {
         emit g_globalSignal.signal_select(checked);
+    });
+    connect(ui->actiondeleteFace, &QAction::triggered, [](bool checked) {
+        emit g_globalSignal.signal_deleteFace();
     });
 
     connect(

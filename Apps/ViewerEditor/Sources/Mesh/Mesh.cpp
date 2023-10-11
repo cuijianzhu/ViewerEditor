@@ -143,3 +143,12 @@ void Mesh::updateOSGNode()
         addChild(geode);
     }
 }
+
+void Mesh::deleteFace() {
+    for (auto& f : m_mesh.face) {
+        if (f.IsS()) {
+            f.SetD();
+        }
+    }
+    updateOSGNode();
+}

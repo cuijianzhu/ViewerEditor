@@ -4,6 +4,7 @@
 #include <osg/Camera>
 #include <osg/Image>
 #include <osg/PositionAttitudeTransform>
+#include <osg/BlendFunc>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osgEarth/Registry>
@@ -38,14 +39,16 @@ OSGViewerWidget::~OSGViewerWidget()
 {}
 
 void OSGViewerWidget::slot_import(const QString& path_) {
-    m_root->removeChild(m_mesh);
+    m_root->removeChild(0, m_root->getNumChildren());
     m_mesh.release();
     m_mesh           = new Mesh;
     std::string path = path_.toLocal8Bit().constData();
     m_mesh->read(path);
     m_selectingLayer->setupMesh(m_mesh);
-    m_mesh->addChild(m_selectingLayer);
+    //m_mesh->addChild(m_selectingLayer);
     m_root->addChild(m_mesh);
+    m_root->addChild(m_selectingLayer);
+
     getOsgViewer()->home();
 }
 
@@ -68,6 +71,10 @@ void OSGViewerWidget::slot_pickFace(bool checked) {
         m_statusHandler->isSelecting = false;
     }
     
+}
+
+void OSGViewerWidget::slot_deleteFace() {
+    m_mesh->deleteFace();
 }
 
 void OSGViewerWidget::resizeEvent(QResizeEvent* event)
@@ -144,6 +151,7 @@ void OSGViewerWidget::initConnect() {
     connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
     connect(&g_globalSignal, &GLobalSignal::signal_exportMesh, this, &OSGViewerWidget::slot_export);
     connect(&g_globalSignal, &GLobalSignal::signal_select, this, &OSGViewerWidget::slot_pickFace);
+    connect(&g_globalSignal, &GLobalSignal::signal_deleteFace, this, &OSGViewerWidget::slot_deleteFace);
 
     connect(&g_globalSignal, &GLobalSignal::signal_viewHome, [&]() { 
         getOsgViewer()->home();
@@ -153,10 +161,15 @@ void OSGViewerWidget::initConnect() {
 void OSGViewerWidget::init()
 {
     m_root = new osg::Group;
+    auto stateSet    = m_root->getOrCreateStateSet();
+    osg::BlendFunc* blend    = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    stateSet->setAttributeAndModes(blend, osg::StateAttribute::ON);
     m_mesh              = new Mesh;
     m_selectingLayer = new SelectingLayer;
     m_statusHandler = new StatusHandler(m_selectingLayer);
     m_root->addChild(m_mesh);
+    m_root->addChild(m_selectingLayer);
+
     m_cameraManipulator = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
     standardManipulator->setAllowThrow(false);

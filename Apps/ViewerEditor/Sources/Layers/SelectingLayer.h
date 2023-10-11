@@ -21,8 +21,8 @@ private:
     void initWireFrame();
     void initGeometry();
 private:
-    osg::ref_ptr<osg::Group> m_filled;
-    osg::ref_ptr<osg::Group> m_wireframe;
+    osg::ref_ptr<osg::Geode> m_filled;
+    osg::ref_ptr<osg::Geode>      m_wireframe;
     osg::ref_ptr<osg::Geometry> m_geometry;
     osg::ref_ptr<osg::DrawArrays> m_drawArray;
     osg::ref_ptr<osg::Vec3Array>  m_vec3Array;
