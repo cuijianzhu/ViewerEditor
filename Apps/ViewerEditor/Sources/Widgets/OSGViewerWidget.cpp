@@ -16,6 +16,7 @@
 #include <QRubberBand>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QApplication>
 
 #include "GlobalSignal.h"
 #include "Mesh/Mesh.h"
@@ -126,8 +127,11 @@ void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
         auto                          topRight   = rect.topRight();
         reg.Add(MyMesh::CoordType(bottomLeft.x(), height() - bottomLeft.y(), MyMesh::ScalarType(-1.0)));
         reg.Add(MyMesh::CoordType(topRight.x(), height() - topRight.y(), MyMesh::ScalarType(1.0)));
-
-        m_mesh->rectanglePick(reg, vpmMatrix);
+        bool isInvertSelection = false;
+        if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+            isInvertSelection = true;
+        }
+        m_mesh->rectanglePick(reg, vpmMatrix, isInvertSelection);
     }
 }
 

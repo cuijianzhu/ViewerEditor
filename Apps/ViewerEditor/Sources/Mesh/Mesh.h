@@ -9,7 +9,7 @@ class Mesh : public osg::Geode
 public:
     Mesh();
     void read(const std::string& path_);
-    void rectanglePick(vcg::Box3<MyMesh::ScalarType> box_, osg::Matrix vpmMatrix_);
+    void rectanglePick(vcg::Box3<MyMesh::ScalarType> box_, osg::Matrix vpmMatrix_, bool isInvertSelection_);
     void                         updateOSGNode();
     osg::ref_ptr<osg::Geometry>  m_geometry;
     std::string                  m_rootDir;
