@@ -12,6 +12,7 @@ Q_SIGNALS:
     void signal_importMesh(const QString& path_);
     void signal_exportMesh(const QString& path_);
     void signal_select(bool);
+    void signal_invertSelect(bool);
     void signal_deleteFace();
 
 };

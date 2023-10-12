@@ -9,5 +9,8 @@ public:
     virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa);
     ~StatusHandler() = default;
     bool isSelecting   = false;
+    bool isInvertSelection = false;
+    bool isPressing        = false;
+     
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
 };

@@ -35,6 +35,7 @@ void Mesh::read(const std::string& path_) {
     vcg::tri::io::Importer<MyMesh>::Open(m_mesh, path_.c_str());
     boost::filesystem::path path = path_;
     m_rootDir                    = path.parent_path().string();
+    setName("meshNode");
     updateOSGNode();
 }
 
@@ -51,6 +52,49 @@ void Mesh::rectanglePick(vcg::Box3<MyMesh::ScalarType> box_, osg::Matrix vpmMatr
         vcg::Point3f vcgv2(v2.x(), v2.y(), v2.z());
         if (vcg::IntersectionTriangleBox(box_, vcgv0, vcgv1, vcgv2)) {
             if (isInvertSelection_) {
+                f.ClearS();
+            }
+            else {
+                f.SetS();
+            }
+        }
+    }
+}
+
+void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
+{
+    float distance = std::numeric_limits<float>::max();
+    MyFace* minFace;
+    for (auto& f : m_mesh.face) {
+        if (f.IsD()) continue;
+        vcg::Point3f        center(center_.x(), center_.y(), center_.z());
+        vcg::Sphere3<MyMesh::ScalarType> sphere(center, raduis_);
+        vcg::Point3f        witness;
+        auto fcenter = vcg::Barycenter(f);
+
+        if (vcg::Distance(fcenter, center) < raduis_ || vcg::Distance(f.P(0), center) < raduis_ ||
+            vcg::Distance(f.P(1), center) < raduis_ || vcg::Distance(f.P(2), center) < raduis_) {
+            if (isIvert) {
+                f.ClearS();
+            }
+            else {
+                f.SetS();
+            }
+            continue;
+        }
+
+        if (vcg::IntersectionSphereTriangle(sphere, f, witness)/* && distance < raduis_*4*/)
+        {
+            float pd0 = vcg::Distance(f.P(0), witness);
+            float pd1 = vcg::Distance(f.P(1), witness);
+            float pd2 = vcg::Distance(f.P(2), witness);
+            float fwd = vcg::Distance(fcenter, witness);
+            if (fwd > pd0 || fwd > pd1 || fwd > pd2) continue;
+
+            if (vcg::Distance(center, witness) > raduis_) continue;
+
+            //std::cout << "witness : " << witness << std::endl;
+            if (isIvert) {
                 f.ClearS();
             }
             else {

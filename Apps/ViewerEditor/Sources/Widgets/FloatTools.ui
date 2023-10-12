@@ -209,6 +209,14 @@ QMenu::separator {
     <string>D</string>
    </property>
   </action>
+  <action name="actionInvertSelect">
+   <property name="text">
+    <string>反选</string>
+   </property>
+   <property name="shortcut">
+    <string>W</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

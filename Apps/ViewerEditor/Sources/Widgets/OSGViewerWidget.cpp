@@ -29,7 +29,6 @@ OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
     setMouseTracking(true);
-    m_rubberBand = new QRubberBand(QRubberBand::Shape::Rectangle, this);
     m_floatTools = new FloatTools(this);
 
     initConnect();
@@ -66,6 +65,7 @@ void OSGViewerWidget::slot_export(const QString& path_) {
 void OSGViewerWidget::slot_pickFace(bool checked) {
     if (checked) {
         m_statusHandler->isSelecting = true;
+        m_statusHandler->isInvertSelection = false;
     }
     else {
         m_statusHandler->isSelecting = false;
@@ -73,8 +73,19 @@ void OSGViewerWidget::slot_pickFace(bool checked) {
     
 }
 
+void OSGViewerWidget::slot_invertpickFace(bool checked) {
+    if (checked) {
+        m_statusHandler->isSelecting       = true;
+        m_statusHandler->isInvertSelection = true;
+    }
+    else {
+        m_statusHandler->isSelecting = false;
+    }
+}
+
 void OSGViewerWidget::slot_deleteFace() {
     m_mesh->deleteFace();
+    m_selectingLayer->updateGeometry();
 }
 
 void OSGViewerWidget::resizeEvent(QResizeEvent* event)
@@ -92,22 +103,12 @@ void OSGViewerWidget::keyReleaseEvent(QKeyEvent* event) {
 
 void OSGViewerWidget::mousePressEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mousePressEvent(event);
-    m_isPress = true;
-    if (m_statusHandler->isSelecting) {
-        m_origin = event->pos();
-        if (!m_rubberBand) m_rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
-        m_rubberBand->setGeometry(QRect(m_origin, QSize()));
-        m_rubberBand->show();
-    }
+    m_statusHandler->isPressing = true;
 }
 
 void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseReleaseEvent(event);
-    m_isPress = false;
-    if (m_statusHandler->isSelecting) {
-        m_rubberBand->hide();
-        m_rubberBand->setGeometry(0,0, 0,0);
-    }
+    m_statusHandler->isPressing = false;
 }
 
 void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
@@ -116,30 +117,6 @@ void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 
 void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event) {
     osgQOpenGLWidget::mouseMoveEvent(event);
-    if (m_statusHandler->isSelecting && m_isPress) {
-        auto rect = QRect(m_origin, event->pos()).normalized();
-        m_rubberBand->setGeometry(rect);
-
-        auto camera    = getOsgViewer()->getCamera();
-        auto vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix() *
-                         camera->getViewport()->computeWindowMatrix();
-        vcg::Matrix33f vcg_vpmmatrix;
-        for (size_t i = 0; i < 3; i++) {
-            for (size_t j = 0; j < 3; j++) {
-                vcg_vpmmatrix[i][j] = vpmMatrix(i, j);
-            }
-        }
-        vcg::Box3<MyMesh::ScalarType> reg;
-        auto                          bottomLeft = rect.bottomLeft();
-        auto                          topRight   = rect.topRight();
-        reg.Add(MyMesh::CoordType(bottomLeft.x(), height() - bottomLeft.y(), MyMesh::ScalarType(-1.0)));
-        reg.Add(MyMesh::CoordType(topRight.x(), height() - topRight.y(), MyMesh::ScalarType(1.0)));
-        bool isInvertSelection = false;
-        if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-            isInvertSelection = true;
-        }
-        m_mesh->rectanglePick(reg, vpmMatrix, isInvertSelection);
-    }
 }
 
 void OSGViewerWidget::wheelEvent(QWheelEvent* event) {
@@ -151,6 +128,8 @@ void OSGViewerWidget::initConnect() {
     connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
     connect(&g_globalSignal, &GLobalSignal::signal_exportMesh, this, &OSGViewerWidget::slot_export);
     connect(&g_globalSignal, &GLobalSignal::signal_select, this, &OSGViewerWidget::slot_pickFace);
+    connect(
+        &g_globalSignal, &GLobalSignal::signal_invertSelect, this, &OSGViewerWidget::slot_invertpickFace);
     connect(&g_globalSignal, &GLobalSignal::signal_deleteFace, this, &OSGViewerWidget::slot_deleteFace);
 
     connect(&g_globalSignal, &GLobalSignal::signal_viewHome, [&]() { 

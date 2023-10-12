@@ -33,6 +33,7 @@ public slots:
     void slot_import(const QString& path_);
     void slot_export(const QString& path_);
     void slot_pickFace(bool);
+    void slot_invertpickFace(bool);
     void slot_deleteFace();
 
 protected:
