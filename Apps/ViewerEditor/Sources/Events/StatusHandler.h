@@ -11,6 +11,6 @@ public:
     bool isSelecting   = false;
     bool isInvertSelection = false;
     bool isPressing        = false;
-     
+    osg::ref_ptr<osg::Geode>     m_geode;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
 };

@@ -39,28 +39,6 @@ void Mesh::read(const std::string& path_) {
     updateOSGNode();
 }
 
-void Mesh::rectanglePick(vcg::Box3<MyMesh::ScalarType> box_, osg::Matrix vpmMatrix_, bool isInvertSelection_)
-{
-    for (auto& f : m_mesh.face) {
-        if (f.IsD()) continue;
-        auto v0 = osg::Vec3(f.V(0)->P().X(), f.V(0)->P().Y(), f.V(0)->P().Z()) * vpmMatrix_;
-        auto v1 = osg::Vec3(f.V(1)->P().X(), f.V(1)->P().Y(), f.V(1)->P().Z()) * vpmMatrix_;
-        auto v2 = osg::Vec3(f.V(2)->P().X(), f.V(2)->P().Y(), f.V(2)->P().Z()) * vpmMatrix_;
-        
-        vcg::Point3f vcgv0(v0.x(), v0.y(), v0.z());
-        vcg::Point3f vcgv1(v1.x(), v1.y(), v1.z());
-        vcg::Point3f vcgv2(v2.x(), v2.y(), v2.z());
-        if (vcg::IntersectionTriangleBox(box_, vcgv0, vcgv1, vcgv2)) {
-            if (isInvertSelection_) {
-                f.ClearS();
-            }
-            else {
-                f.SetS();
-            }
-        }
-    }
-}
-
 void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
 {
     float distance = std::numeric_limits<float>::max();
