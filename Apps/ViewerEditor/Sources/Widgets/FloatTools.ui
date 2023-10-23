@@ -217,6 +217,22 @@ QMenu::separator {
     <string>W</string>
    </property>
   </action>
+  <action name="actionLinkFace">
+   <property name="text">
+    <string>链接选择</string>
+   </property>
+   <property name="shortcut">
+    <string>L</string>
+   </property>
+  </action>
+  <action name="actionClearSelect">
+   <property name="text">
+    <string>清除选择</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+C</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

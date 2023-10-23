@@ -8,7 +8,7 @@
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
 #include <osgDB/ReadFile>
-
+#include <vcg/complex/algorithms/clean.h>
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
@@ -116,6 +116,28 @@ void SelectingLayer::updateGeometry()
     m_drawArray->setCount(m_vec3Array->size());
     m_vec3Array->dirty();
     m_geometry->dirtyDisplayList();
+}
+
+void SelectingLayer::linkSelection() {
+    if (!m_mesh) return;
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
+    for (auto& f : m_mesh->m_mesh.face) {
+
+        if (f.IsS() && !f.IsD()) {
+            for (size_t i = 0; i < f.VN(); i++) {
+                auto& ffp = f.FFp(i);
+                if (ffp) {
+                    ffp->SetS();
+                }
+            }
+        }
+    }
+    updateGeometry();
+}
+
+void SelectingLayer::clearSelection() {
+    vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
+    updateGeometry();
 }
 
 void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)

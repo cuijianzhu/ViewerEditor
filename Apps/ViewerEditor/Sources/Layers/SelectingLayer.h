@@ -12,6 +12,8 @@ public:
     SelectingLayer();
     ~SelectingLayer() = default;
     void               updateGeometry();
+    void               linkSelection();
+    void               clearSelection();
     void               setupMesh(osg::ref_ptr<Mesh>);
     osg::ref_ptr<Mesh> m_mesh;
 

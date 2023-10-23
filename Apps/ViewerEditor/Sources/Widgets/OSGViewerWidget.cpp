@@ -66,6 +66,7 @@ void OSGViewerWidget::slot_export(const QString& path_)
 void OSGViewerWidget::slot_pickFace(bool checked)
 {
     if (checked) {
+        m_statusHandler->m_radius          = 0.2;
         m_statusHandler->isSelecting       = true;
         m_statusHandler->isInvertSelection = false;
     }
@@ -79,6 +80,7 @@ void OSGViewerWidget::slot_pickFace(bool checked)
 void OSGViewerWidget::slot_invertpickFace(bool checked)
 {
     if (checked) {
+        m_statusHandler->m_radius = 0.2;
         m_statusHandler->isSelecting       = false;
         m_statusHandler->isInvertSelection = true;
     }
@@ -150,6 +152,12 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_importMesh, this, &OSGViewerWidget::slot_import);
     connect(&g_globalSignal, &GLobalSignal::signal_exportMesh, this, &OSGViewerWidget::slot_export);
     connect(&g_globalSignal, &GLobalSignal::signal_select, this, &OSGViewerWidget::slot_pickFace);
+    connect(&g_globalSignal, &GLobalSignal::signal_linkFace, [&]() {
+            m_selectingLayer->linkSelection();
+        });
+    connect(&g_globalSignal, &GLobalSignal::signal_clearSelect, [&]() {
+        m_selectingLayer->clearSelection();
+    });
     connect(&g_globalSignal,
             &GLobalSignal::signal_invertSelect,
             this,
