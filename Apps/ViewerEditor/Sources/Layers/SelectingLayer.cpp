@@ -9,6 +9,7 @@
 #include <osg/PolygonOffset>
 #include <osgDB/ReadFile>
 #include <vcg/complex/algorithms/clean.h>
+#include <vcg/complex/algorithms/hole.h>
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
@@ -137,6 +138,33 @@ void SelectingLayer::linkSelection() {
 
 void SelectingLayer::clearSelection() {
     vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
+    updateGeometry();
+}
+
+void SelectingLayer::showBorder() {
+    if (!m_mesh) return;
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
+    typedef typename vcg::face::Pos<MyFace> PosType;
+    for (auto& f : m_mesh->m_mesh.face) {
+        
+        if (f.IsS() && !f.IsD()) {
+            int nB = 0;
+            for (int j = 0; j < 3; ++j) {
+                if (vcg::face::IsBorder<MyFace>(f, j))
+                {
+                    nB++;
+                    f.SetS();   
+                    PosType ps(&f, j, f.V(j));
+                    PosType pi = ps;
+                    do {
+                        pi.NextB();
+                        pi.f->SetS();
+                    } while (pi!=ps);
+                }
+            }
+            if (!nB) f.ClearS();
+        }
+    }
     updateGeometry();
 }
 

@@ -14,6 +14,7 @@ public:
     void               updateGeometry();
     void               linkSelection();
     void               clearSelection();
+    void               showBorder();
     void               setupMesh(osg::ref_ptr<Mesh>);
     osg::ref_ptr<Mesh> m_mesh;
 

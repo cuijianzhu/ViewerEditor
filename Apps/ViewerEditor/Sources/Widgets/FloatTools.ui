@@ -233,6 +233,14 @@ QMenu::separator {
     <string>Shift+C</string>
    </property>
   </action>
+  <action name="actionShowBorder">
+   <property name="text">
+    <string>显示边界</string>
+   </property>
+   <property name="shortcut">
+    <string>B</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

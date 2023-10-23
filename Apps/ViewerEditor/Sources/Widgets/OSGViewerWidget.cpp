@@ -155,6 +155,9 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_linkFace, [&]() {
             m_selectingLayer->linkSelection();
         });
+    connect(&g_globalSignal, &GLobalSignal::signal_showBorder, [&]() {
+        m_selectingLayer->showBorder();
+    });
     connect(&g_globalSignal, &GLobalSignal::signal_clearSelect, [&]() {
         m_selectingLayer->clearSelection();
     });
