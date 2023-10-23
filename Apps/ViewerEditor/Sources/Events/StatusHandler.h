@@ -14,4 +14,5 @@ public:
     bool                         isPressing        = false;
     osg::ref_ptr<osg::Geode>     m_geode;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
+    float                        m_radius = 0.2;
 };

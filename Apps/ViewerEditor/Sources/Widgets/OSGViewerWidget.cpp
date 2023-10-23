@@ -136,6 +136,12 @@ void OSGViewerWidget::mouseMoveEvent(QMouseEvent* event)
 void OSGViewerWidget::wheelEvent(QWheelEvent* event)
 {
     osgQOpenGLWidget::wheelEvent(event);
+    if (m_statusHandler->isPressing) {
+        if (event->delta() > 0)
+            m_statusHandler->m_radius *= 1.1;   // ·Å´ó
+        else
+            m_statusHandler->m_radius *= 0.9;   // ËõĞ¡
+    }
 }
 
 void OSGViewerWidget::initConnect()
