@@ -161,6 +161,9 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_clearSelect, [&]() {
         m_selectingLayer->clearSelection();
     });
+    connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {
+        m_selectingLayer->fillHole();
+    });
     connect(&g_globalSignal,
             &GLobalSignal::signal_invertSelect,
             this,

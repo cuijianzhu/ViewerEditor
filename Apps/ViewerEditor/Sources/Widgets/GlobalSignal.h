@@ -17,6 +17,7 @@ Q_SIGNALS:
     void signal_linkFace();
     void signal_clearSelect();
     void signal_showBorder();
+    void signal_fillHole();
 };
 
 extern GLobalSignal g_globalSignal;

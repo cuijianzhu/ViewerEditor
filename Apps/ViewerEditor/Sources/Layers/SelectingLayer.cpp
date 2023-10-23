@@ -168,6 +168,51 @@ void SelectingLayer::showBorder() {
     updateGeometry();
 }
 
+void SelectingLayer::fillHole() {
+    if (!m_mesh) return;
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
+    for (auto& f : m_mesh->m_mesh.face) {
+        if (f.IsS() && !f.IsD()) {
+            int nB = 0;
+            for (int j = 0; j < 3; ++j) {
+                if (vcg::face::IsBorder<MyFace>(f, j)) {
+                    vcg::tri::Hole<MyMesh>::PosType ps(&f, j, f.V(j));
+                    ps.NextB();
+                    std::vector<vcg::tri::Hole<MyMesh>::FacePointer*> filledFaces;
+                    /*vcg::tri::Hole<MyMesh>::FillHoleEar<vcg::tri::MinimumWeightEar<MyMesh>>(
+                        m_mesh->m_mesh, ps, filledFaces);*/
+                    std::vector<vcg::tri::Hole<MyMesh>::Info> vinfo;
+                    vcg::tri::Hole<MyMesh>::GetInfo(m_mesh->m_mesh, true, vinfo);
+                    int ifbegin = m_mesh->m_mesh.face.size();
+                    typename std::vector<vcg::tri::Hole<MyMesh>::Info>::iterator ith;
+                    int                                  indCb   = 0;
+                    int                                  holeCnt = 0;
+                    std::vector<vcg::tri::Hole<MyMesh>::FacePointer*>            facePtrToBeUpdated;
+                    for (ith = vinfo.begin(); ith != vinfo.end(); ++ith)
+                        facePtrToBeUpdated.push_back(&(*ith).p.f);
+
+                    for (ith = vinfo.begin(); ith != vinfo.end(); ++ith) {
+                        vcg::tri::Hole<MyMesh>::FillHoleEar<vcg::tri::MinimumWeightEar<MyMesh>>(
+                            m_mesh->m_mesh, (*ith).p, facePtrToBeUpdated);
+                    }
+                    vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
+                    /*for (size_t i = 0; i < facePtrToBeUpdated.size(); i++) {
+                        (*facePtrToBeUpdated[i])->SetS();
+                    }*/
+                    for (size_t fi = ifbegin; fi < m_mesh->m_mesh.face.size(); fi++) {
+                        m_mesh->m_mesh.face[fi].SetS();
+                    }
+                    updateGeometry();
+                    /*vcg::tri::Hole<MyMesh>::EarCuttingFill<vcg::tri::MinimumWeightEar<MyMesh>>(
+                        m_mesh->m_mesh, true);*/
+                    return;
+                }
+            }
+        }
+    }
+    //m_mesh->updateOSGNode();
+}
+
 void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)
 {
     m_mesh = mesh_;

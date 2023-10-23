@@ -241,6 +241,14 @@ QMenu::separator {
     <string>B</string>
    </property>
   </action>
+  <action name="actionFillHole">
+   <property name="text">
+    <string>补洞</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>
