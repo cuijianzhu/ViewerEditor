@@ -37,6 +37,7 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
                     osg::Vec3f                       point  = intersection.getLocalIntersectPoint();
                     osg::ref_ptr<osg::ShapeDrawable> shape  = new osg::ShapeDrawable(
                         new osg::Sphere(intersection.getWorldIntersectPoint(), radius));
+                    shape->setColor({1.0, 0.0, 0.0, 0.2});
                     m_geode->addDrawable(shape.get());
                     root->addChild(m_geode);
                     m_selectingLayer->m_mesh->pickSphere(point, radius, isInvertSelection);
