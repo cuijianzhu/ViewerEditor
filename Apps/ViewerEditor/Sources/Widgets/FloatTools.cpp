@@ -1,11 +1,11 @@
 #include "FloatTools.h"
-#include "ui_FloatTools.h"
-#include <QMenu>
-#include <QFileDialog>
 #include "GlobalSignal.h"
-FloatTools::FloatTools(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::FloatTools)
+#include "ui_FloatTools.h"
+#include <QFileDialog>
+#include <QMenu>
+FloatTools::FloatTools(QWidget* parent)
+    : QWidget(parent)
+    , ui(new Ui::FloatTools)
 {
     ui->setupUi(this);
 
@@ -33,32 +33,31 @@ FloatTools::~FloatTools()
     delete ui;
 }
 
-void FloatTools::initConnect() {
+void FloatTools::initConnect()
+{
     connect(
-        ui->actionHome, &QAction::triggered, [](bool) { emit g_globalSignal.signal_viewHome();
-    });
+        ui->actionHome, &QAction::triggered, [](bool) { emit g_globalSignal.signal_viewHome(); });
 
-    connect(ui->actionSelect, &QAction::triggered, [](bool checked) {
+    connect(ui->actionSelect, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_select(checked);
+        ui->actionInvertSelect->setChecked(false);
     });
-    connect(ui->actionInvertSelect, &QAction::triggered, [](bool checked) {
+    connect(ui->actionInvertSelect, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_invertSelect(checked);
+        ui->actionSelect->setChecked(false);
     });
 
     connect(ui->actiondeleteFace, &QAction::triggered, [](bool checked) {
         emit g_globalSignal.signal_deleteFace();
     });
 
-    connect(
-        ui->actionImport, &QAction::triggered, [](bool) { 
-            auto result = QFileDialog::getOpenFileName(nullptr,
-                                                       QString::fromLocal8Bit("打开模型文件"),
-                                                       "",
-                                                       tr("obj file (*.obj)"));
-            if (!result.isEmpty()) {
-                emit g_globalSignal.signal_importMesh(result); 
-            }
-        });
+    connect(ui->actionImport, &QAction::triggered, [](bool) {
+        auto result = QFileDialog::getOpenFileName(
+            nullptr, QString::fromLocal8Bit("打开模型文件"), "", tr("obj file (*.obj)"));
+        if (!result.isEmpty()) {
+            emit g_globalSignal.signal_importMesh(result);
+        }
+    });
 
     connect(ui->actionExport, &QAction::triggered, [](bool) {
         auto result = QFileDialog::getSaveFileName(

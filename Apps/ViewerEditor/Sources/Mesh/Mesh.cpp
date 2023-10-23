@@ -1,16 +1,16 @@
 #include "Mesh.h"
-#include <wrap/io_trimesh/import.h>
 #include <boost/filesystem/path.hpp>
+#include <iostream>
 #include <osg/Array>
-#include <osg/Geometry>
 #include <osg/Geode>
+#include <osg/Geometry>
+#include <osg/Material>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
-#include <osg/Material>
-#include <vector>
-#include <iostream>
 #include <unordered_map>
+#include <vector>
+#include <wrap/io_trimesh/import.h>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -28,7 +28,8 @@ template<> struct hash<std::pair<float, float>>
 
 Mesh::Mesh() {}
 
-void Mesh::read(const std::string& path_) {
+void Mesh::read(const std::string& path_)
+{
     m_mesh.Clear();
     vcg::tri::RequirePerVertexTexCoord(m_mesh);
     vcg::tri::RequirePerFaceWedgeTexCoord(m_mesh);
@@ -41,14 +42,14 @@ void Mesh::read(const std::string& path_) {
 
 void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
 {
-    float distance = std::numeric_limits<float>::max();
+    float   distance = std::numeric_limits<float>::max();
     MyFace* minFace;
     for (auto& f : m_mesh.face) {
         if (f.IsD()) continue;
-        vcg::Point3f        center(center_.x(), center_.y(), center_.z());
+        vcg::Point3f                     center(center_.x(), center_.y(), center_.z());
         vcg::Sphere3<MyMesh::ScalarType> sphere(center, raduis_);
-        vcg::Point3f        witness;
-        auto fcenter = vcg::Barycenter(f);
+        vcg::Point3f                     witness;
+        auto                             fcenter = vcg::Barycenter(f);
 
         if (vcg::Distance(fcenter, center) < raduis_ || vcg::Distance(f.P(0), center) < raduis_ ||
             vcg::Distance(f.P(1), center) < raduis_ || vcg::Distance(f.P(2), center) < raduis_) {
@@ -61,8 +62,7 @@ void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
             continue;
         }
 
-        if (vcg::IntersectionSphereTriangle(sphere, f, witness)/* && distance < raduis_*4*/)
-        {
+        if (vcg::IntersectionSphereTriangle(sphere, f, witness) /* && distance < raduis_*4*/) {
             float pd0 = vcg::Distance(f.P(0), witness);
             float pd1 = vcg::Distance(f.P(1), witness);
             float pd2 = vcg::Distance(f.P(2), witness);
@@ -71,7 +71,7 @@ void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
 
             if (vcg::Distance(center, witness) > raduis_) continue;
 
-            //std::cout << "witness : " << witness << std::endl;
+            // std::cout << "witness : " << witness << std::endl;
             if (isIvert) {
                 f.ClearS();
             }
@@ -88,10 +88,10 @@ void Mesh::updateOSGNode()
     removeChild(0, getNumChildren());
     typedef std::unordered_map<std::pair<float, float>, std::tuple<short, osg::Vec3, size_t>>
                                                      TexCoordMap;
-    std::vector<osg::ref_ptr<osg::Vec3Array>>       vvertices;
+    std::vector<osg::ref_ptr<osg::Vec3Array>>        vvertices;
     std::vector<osg::ref_ptr<osg::DrawElementsUInt>> vdrawElements;
-    std::vector<osg::ref_ptr<osg::Vec2Array>> vtexCoords;
-    std::vector <osg::ref_ptr<osg::Geometry>>        vgeometry;
+    std::vector<osg::ref_ptr<osg::Vec2Array>>        vtexCoords;
+    std::vector<osg::ref_ptr<osg::Geometry>>         vgeometry;
     std::vector<TexCoordMap>                         vtexcoordMap;
 
     for (size_t i = 0; i < 1 || i < m_mesh.textures.size(); i++) {
@@ -106,7 +106,6 @@ void Mesh::updateOSGNode()
 
         osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
         vvertices.push_back(vertices);
-
     }
     vtexcoordMap.resize(m_mesh.textures.size());
 
@@ -114,14 +113,12 @@ void Mesh::updateOSGNode()
     for (auto& f : m_mesh.face) {
         if (!f.IsD()) {
             for (size_t i = 0; i < 3; i++) {
-                auto& v = f.V(i);
+                auto&                   v           = f.V(i);
                 short                   nTex        = f.WT(i).n();
-                std::pair<float, float> texCoord =
-                    std::make_pair(f.WT(i).u(), f.WT(i).v());
+                std::pair<float, float> texCoord    = std::make_pair(f.WT(i).u(), f.WT(i).v());
                 auto&                   texcoordMap = vtexcoordMap[nTex];
                 if (texcoordMap.find(texCoord) == texcoordMap.end()) {
-                    osg::Vec3 vertex =
-                        osg::Vec3(v->P().X(), v->P().Y(), v->P().Z());
+                    osg::Vec3 vertex = osg::Vec3(v->P().X(), v->P().Y(), v->P().Z());
                     std::tuple<short, osg::Vec3, size_t> tuple(
                         f.WT(i).n(), vertex, texcoordMap.size());
                     texcoordMap[texCoord] = tuple;
@@ -129,8 +126,8 @@ void Mesh::updateOSGNode()
                     vtexCoords[nTex]->push_back({texCoord.first, texCoord.second});
                 }
 
-                auto      tuple         = texcoordMap[texCoord];
-                size_t    texCoordIndex = std::get<2>(tuple);
+                auto   tuple         = texcoordMap[texCoord];
+                size_t texCoordIndex = std::get<2>(tuple);
 
                 vdrawElements[nTex]->push_back(texCoordIndex);
             }
@@ -145,15 +142,15 @@ void Mesh::updateOSGNode()
         osg::ref_ptr<osg::StateSet> stateset = vgeometry[i]->getOrCreateStateSet();
 
         // Œ∆¿Ì
-        if (m_mesh.textures.size()!=0) {
+        if (m_mesh.textures.size() != 0) {
             boost::filesystem::path textPath =
                 boost::filesystem::path(m_rootDir) / m_mesh.textures[i];
-            osg::ref_ptr<osg::Image>    image =
+            osg::ref_ptr<osg::Image> image =
                 osgDB::readImageFile(textPath.generic_path().generic_string());
             osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
             stateset->setTextureAttributeAndModes(0, texture);
         }
-        
+
         // ≤ƒ÷ 
         osg::ref_ptr<osg::Material> osg_material = new osg::Material;
         stateset->setAttribute(osg_material);
@@ -166,7 +163,8 @@ void Mesh::updateOSGNode()
     }
 }
 
-void Mesh::deleteFace() {
+void Mesh::deleteFace()
+{
     for (auto& f : m_mesh.face) {
         if (f.IsS()) {
             f.SetD();

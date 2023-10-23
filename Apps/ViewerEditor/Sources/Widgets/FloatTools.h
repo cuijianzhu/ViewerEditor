@@ -12,14 +12,14 @@ class FloatTools : public QWidget
     Q_OBJECT
 
 public:
-    explicit FloatTools(QWidget *parent = nullptr);
+    explicit FloatTools(QWidget* parent = nullptr);
     ~FloatTools();
 
 private:
     void initConnect();
 
 private:
-    Ui::FloatTools *ui;
+    Ui::FloatTools* ui;
 };
 
-#endif // FLOATTOOLS_H
+#endif   // FLOATTOOLS_H

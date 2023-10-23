@@ -15,10 +15,10 @@ struct MyUsedTypes
                             vcg::Use<MyFace>::AsFaceType>
 {};
 
-class MyVertex : public vcg::Vertex<MyUsedTypes, vcg::vertex::VFAdj, vcg::vertex::Coord3f,
+class MyVertex
+    : public vcg::Vertex<MyUsedTypes, vcg::vertex::VFAdj, vcg::vertex::Coord3f,
                          vcg::vertex::Normal3f, vcg::vertex::Color4b, vcg::vertex::Mark,
-                         vcg::vertex::TexCoord2f,
-                                    vcg::vertex::Qualityf, vcg::vertex::BitFlags>
+                         vcg::vertex::TexCoord2f, vcg::vertex::Qualityf, vcg::vertex::BitFlags>
 {
 public:
     vcg::math::Quadric<double>& Qd() { return q; }
@@ -32,8 +32,9 @@ class MyEdge : public vcg::Edge<MyUsedTypes>
 
 typedef vcg::tri::BasicVertexPair<MyVertex> VertexPair;
 
-class MyFace : public vcg::Face<MyUsedTypes, vcg::face::VFAdj, vcg::face::FFAdj,
-                                vcg::face::Normal3f, vcg::face::VertexRef, vcg::face::WedgeTexCoord2f, vcg::face::BitFlags>
+class MyFace
+    : public vcg::Face<MyUsedTypes, vcg::face::VFAdj, vcg::face::FFAdj, vcg::face::Normal3f,
+                       vcg::face::VertexRef, vcg::face::WedgeTexCoord2f, vcg::face::BitFlags>
 {};
 
 // the main mesh class

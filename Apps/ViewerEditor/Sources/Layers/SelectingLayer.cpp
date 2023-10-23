@@ -1,17 +1,17 @@
 #include "SelectingLayer.h"
-#include <osg/PolygonOffset>
-#include <osg/PolygonMode>
-#include <osg/Material>
-#include <osg/BlendFunc>
-#include <osg/LineWidth>
-#include <osgDB/ReadFile>
-#include <osg/Geometry>
-#include <osg/Array>
 #include <Mesh/Mesh.h>
+#include <osg/Array>
+#include <osg/BlendFunc>
+#include <osg/Geometry>
+#include <osg/LineWidth>
+#include <osg/Material>
+#include <osg/PolygonMode>
+#include <osg/PolygonOffset>
+#include <osgDB/ReadFile>
 
 SelectingLayer::SelectingLayer()
 {
-    m_filled = new osg::Geode;
+    m_filled    = new osg::Geode;
     m_wireframe = new osg::Geode;
     m_geometry  = new osg::Geometry;
     m_drawArray = new osg::DrawArrays(GL_TRIANGLES, 0, 0);
@@ -23,7 +23,8 @@ SelectingLayer::SelectingLayer()
     addChild(m_wireframe);
 }
 
-void SelectingLayer::initFilled() {
+void SelectingLayer::initFilled()
+{
     osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
     osg::ref_ptr<osg::PolygonOffset> polyoffset = new osg::PolygonOffset;
     polyoffset->setFactor(-1.0f);
@@ -57,7 +58,8 @@ void SelectingLayer::initFilled() {
     m_filled->addDrawable(m_geometry);
 }
 
-void SelectingLayer::initWireFrame() {
+void SelectingLayer::initWireFrame()
+{
     osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
     osg::ref_ptr<osg::PolygonOffset> polyoffset = new osg::PolygonOffset;
     polyoffset->setFactor(-1.5f);
@@ -93,16 +95,18 @@ void SelectingLayer::initWireFrame() {
     m_wireframe->addDrawable(m_geometry);
 }
 
-void SelectingLayer::initGeometry() {
+void SelectingLayer::initGeometry()
+{
     m_geometry->setVertexArray(m_vec3Array);
     m_geometry->addPrimitiveSet(m_drawArray);
 }
 
-void SelectingLayer::updateGeometry() {
+void SelectingLayer::updateGeometry()
+{
     if (!m_mesh) return;
     m_vec3Array->clear();
     for (auto& f : m_mesh->m_mesh.face) {
-        if (f.IsS()&&!f.IsD()) {
+        if (f.IsS() && !f.IsD()) {
             for (size_t i = 0; i < 3; i++) {
                 auto& p = f.V(i)->P();
                 m_vec3Array->push_back({p.X(), p.Y(), p.Z()});
@@ -114,6 +118,7 @@ void SelectingLayer::updateGeometry() {
     m_geometry->dirtyDisplayList();
 }
 
-void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_) {
+void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)
+{
     m_mesh = mesh_;
 }
