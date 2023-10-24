@@ -11,6 +11,7 @@
 #include <vcg/complex/algorithms/clean.h>
 #include <vcg/complex/algorithms/hole.h>
 #include <QString>
+#include <QFileSystemWatcher>
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
@@ -218,6 +219,19 @@ void SelectingLayer::fillHole() {
                     m_mesh->m_TexNo++;
                     auto imageText ="Tex" + std::to_string(m_holeNo) + ".png";
                     m_mesh->m_mesh.textures.push_back(imageText);
+
+                    // 创建一个文件系统监视器
+                    QFileSystemWatcher* watcher = new QFileSystemWatcher;
+
+                    // 添加要监视的文件
+                    QString filePath = QString::fromLocal8Bit(holeTextPath().c_str());
+                    watcher->addPath(filePath);
+
+                    // 连接文件系统监视器的fileChanged信号到槽函数
+                    QObject::connect(watcher,
+                                     &QFileSystemWatcher::fileChanged,
+                                     [&](const QString& path) { m_mesh->updateOSGNode();
+                        });
                     return;
                 }
             }
