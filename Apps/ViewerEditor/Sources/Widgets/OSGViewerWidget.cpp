@@ -161,6 +161,8 @@ void OSGViewerWidget::initConnect()
         auto texPath = m_selectingLayer->holeTextPath();
         auto image = grabFramebuffer();
         image.save(QString::fromLocal8Bit(texPath.c_str()));
+        m_selectingLayer->clearSelection();
+        m_selectingLayer->m_mesh->updateOSGNode();
     });
     connect(&g_globalSignal,
             &GLobalSignal::signal_invertSelect,
