@@ -1,5 +1,6 @@
 #pragma once
 #include <osg/Group>
+#include <osg/Matrixd>
 namespace osg {
 class Geometry;
 class DrawArrays;
@@ -16,8 +17,10 @@ public:
     void               clearSelection();
     void               showBorder();
     void               fillHole();
+    std::string        holeTextPath();
     void               setupMesh(osg::ref_ptr<Mesh>);
     osg::ref_ptr<Mesh> m_mesh;
+    osg::Matrixd       m_vpmMatrix;
 
 private:
     void initFilled();
@@ -30,4 +33,5 @@ private:
     osg::ref_ptr<osg::Geometry>   m_geometry;
     osg::ref_ptr<osg::DrawArrays> m_drawArray;
     osg::ref_ptr<osg::Vec3Array>  m_vec3Array;
+    int                           m_holeNo = 0;
 };

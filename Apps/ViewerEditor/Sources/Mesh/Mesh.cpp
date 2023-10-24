@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <wrap/io_trimesh/import.h>
+#include <wrap/io_trimesh/export.h>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -38,6 +39,11 @@ void Mesh::read(const std::string& path_)
     m_rootDir                    = path.parent_path().string();
     setName("meshNode");
     updateOSGNode();
+}
+
+void Mesh::write(const std::string& path_) {
+    vcg::tri::io::Exporter<MyMesh>::Save(
+        m_mesh, path_.c_str(), vcg::tri::io::Mask::IOM_WEDGTEXCOORD);
 }
 
 void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
@@ -93,6 +99,7 @@ void Mesh::updateOSGNode()
     std::vector<osg::ref_ptr<osg::Vec2Array>>        vtexCoords;
     std::vector<osg::ref_ptr<osg::Geometry>>         vgeometry;
     std::vector<TexCoordMap>                         vtexcoordMap;
+    m_TexNo = m_mesh.textures.size();
 
     for (size_t i = 0; i < 1 || i < m_mesh.textures.size(); i++) {
         osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;

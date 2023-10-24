@@ -10,6 +10,7 @@
 #include <osgDB/ReadFile>
 #include <vcg/complex/algorithms/clean.h>
 #include <vcg/complex/algorithms/hole.h>
+#include <QString>
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
@@ -196,21 +197,40 @@ void SelectingLayer::fillHole() {
                             m_mesh->m_mesh, (*ith).p, facePtrToBeUpdated);
                     }
                     vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
-                    /*for (size_t i = 0; i < facePtrToBeUpdated.size(); i++) {
-                        (*facePtrToBeUpdated[i])->SetS();
-                    }*/
+                    
                     for (size_t fi = ifbegin; fi < m_mesh->m_mesh.face.size(); fi++) {
-                        m_mesh->m_mesh.face[fi].SetS();
+                        auto& fff =  m_mesh->m_mesh.face[fi];
+                        fff.SetS();
+                        for (size_t k = 0; k < 3; k++) {
+                            m_mesh->m_mesh.face[fi].WT(k).n() = m_mesh->m_TexNo;
+                            auto uvCoord =
+                                osg::Vec3(fff.V(k)->P().X(), fff.V(k)->P().Y(), fff.V(k)->P().Z()) *
+                                      m_vpmMatrix;
+                            uvCoord[0] = (uvCoord[0]+1.0f)*0.5f;
+                            uvCoord[1] = (uvCoord[1]+1.0f)*0.5f;
+                            m_mesh->m_mesh.face[fi].WT(k).u() = uvCoord[0];
+                            m_mesh->m_mesh.face[fi].WT(k).v() = uvCoord[1];
+                        }
                     }
+                    
                     updateGeometry();
-                    /*vcg::tri::Hole<MyMesh>::EarCuttingFill<vcg::tri::MinimumWeightEar<MyMesh>>(
-                        m_mesh->m_mesh, true);*/
+                    m_holeNo++;
+                    m_mesh->m_TexNo++;
+                    auto imageText ="Tex" + std::to_string(m_holeNo) + ".png";
+                    m_mesh->m_mesh.textures.push_back(imageText);
                     return;
                 }
             }
         }
     }
     //m_mesh->updateOSGNode();
+}
+
+std::string SelectingLayer::holeTextPath()
+{
+    std::string imagename = "/Tex" + std::to_string(m_holeNo) + ".png";
+    auto rnt = m_mesh->m_rootDir + imagename;
+    return rnt;
 }
 
 void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)
