@@ -27,7 +27,11 @@ template<> struct hash<std::pair<float, float>>
 };
 }   // namespace std
 
-Mesh::Mesh() {}
+Mesh::Mesh() {
+    osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+    setStateSet(stateset);
+}
 
 void Mesh::read(const std::string& path_)
 {
@@ -161,8 +165,9 @@ void Mesh::updateOSGNode()
         // ²ÄÖÊ
         osg::ref_ptr<osg::Material> osg_material = new osg::Material;
         stateset->setAttribute(osg_material);
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
         osg_material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        osg_material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
+        osg_material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
         osg_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
         osg::ref_ptr<osg::Geode> geode = new osg::Geode;
         geode->addDrawable(vgeometry[i]);
