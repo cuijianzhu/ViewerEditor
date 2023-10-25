@@ -10,6 +10,7 @@
 #include <osgDB/ReadFile>
 #include <vcg/complex/algorithms/clean.h>
 #include <vcg/complex/algorithms/hole.h>
+#include <vcg/complex/algorithms/refine_loop.h>
 #include <QString>
 #include <QFileSystemWatcher>
 SelectingLayer::SelectingLayer()
@@ -197,23 +198,38 @@ void SelectingLayer::fillHole() {
                         vcg::tri::Hole<MyMesh>::FillHoleEar<vcg::tri::MinimumWeightEar<MyMesh>>(
                             m_mesh->m_mesh, (*ith).p, facePtrToBeUpdated);
                     }
+                    
                     vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
                     
                     for (size_t fi = ifbegin; fi < m_mesh->m_mesh.face.size(); fi++) {
                         auto& fff =  m_mesh->m_mesh.face[fi];
                         fff.SetS();
+                    }
+                    
+                    vcg::tri::RefineOddEven<MyMesh,
+                                            vcg::tri::OddPointLoop<MyMesh>,
+                                            vcg::tri::EvenPointLoop<MyMesh>>(
+                        m_mesh->m_mesh,
+                        vcg::tri::OddPointLoop<MyMesh>(m_mesh->m_mesh),
+                        vcg::tri::EvenPointLoop<MyMesh>(),
+                        0,
+                        true);
+
+                    for (size_t fi = ifbegin; fi < m_mesh->m_mesh.face.size(); fi++) {
+                        auto& fff = m_mesh->m_mesh.face[fi];
+                        fff.SetS();
                         for (size_t k = 0; k < 3; k++) {
                             m_mesh->m_mesh.face[fi].WT(k).n() = m_mesh->m_TexNo;
                             auto uvCoord =
                                 osg::Vec3(fff.V(k)->P().X(), fff.V(k)->P().Y(), fff.V(k)->P().Z()) *
-                                      m_vpmMatrix;
-                            uvCoord[0] = (uvCoord[0]+1.0f)*0.5f;
-                            uvCoord[1] = (uvCoord[1]+1.0f)*0.5f;
+                                m_vpmMatrix;
+                            uvCoord[0]                        = (uvCoord[0] + 1.0f) * 0.5f;
+                            uvCoord[1]                        = (uvCoord[1] + 1.0f) * 0.5f;
                             m_mesh->m_mesh.face[fi].WT(k).u() = uvCoord[0];
                             m_mesh->m_mesh.face[fi].WT(k).v() = uvCoord[1];
                         }
                     }
-                    
+
                     updateGeometry();
                     m_holeNo++;
                     m_mesh->m_TexNo++;
