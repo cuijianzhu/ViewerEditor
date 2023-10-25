@@ -13,6 +13,7 @@ public:
     void                        pickSphere(osg::Vec3 center_, float raduis_, bool isIvert = false);
     void                        updateOSGNode();
     void                        deleteFace();
+    void                        removeSmall();
     osg::ref_ptr<osg::Geometry> m_geometry;
     std::string                 m_rootDir;
     MyMesh                      m_mesh;

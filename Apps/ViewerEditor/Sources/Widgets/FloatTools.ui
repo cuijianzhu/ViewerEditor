@@ -257,6 +257,14 @@ QMenu::separator {
     <string>T</string>
    </property>
   </action>
+  <action name="actionRemoveSmall">
+   <property name="text">
+    <string>删除悬浮物</string>
+   </property>
+   <property name="shortcut">
+    <string>R</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

@@ -29,6 +29,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionShowBorder);
     menuEdit->addAction(ui->actionFillHole);
     menuEdit->addAction(ui->actionFlat);
+    menuEdit->addAction(ui->actionRemoveSmall);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -71,7 +72,9 @@ void FloatTools::initConnect()
     connect(ui->actionFlat, &QAction::triggered, [](bool checked) {
         emit g_globalSignal.signal_flat();
     });
-
+    connect(ui->actionRemoveSmall, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_removeSmall();
+    });
     connect(ui->actionImport, &QAction::triggered, [](bool) {
         auto result = QFileDialog::getOpenFileName(
             nullptr, QString::fromLocal8Bit("打开模型文件"), "", tr("obj file (*.obj)"));

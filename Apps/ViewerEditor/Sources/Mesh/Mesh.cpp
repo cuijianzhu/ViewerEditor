@@ -184,3 +184,9 @@ void Mesh::deleteFace()
     }
     updateOSGNode();
 }
+
+void Mesh::removeSmall() {
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh);
+    vcg::tri::Clean<MyMesh>::RemoveSmallConnectedComponentsSize(m_mesh, 100);
+    updateOSGNode();
+}
