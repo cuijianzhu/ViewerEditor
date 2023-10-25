@@ -144,6 +144,13 @@ void SelectingLayer::clearSelection() {
     updateGeometry();
 }
 
+void SelectingLayer::clearSelectionRender() {
+    m_vec3Array->clear();
+    m_drawArray->setCount(0);
+    m_vec3Array->dirty();
+    m_geometry->dirtyDisplayList();
+}
+
 void SelectingLayer::showBorder() {
     if (!m_mesh) return;
     vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
@@ -254,6 +261,26 @@ void SelectingLayer::fillHole() {
         }
     }
     //m_mesh->updateOSGNode();
+}
+
+void SelectingLayer::flat() {
+    
+    if (!m_mesh) return;
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
+    MyFace* faceN = nullptr;
+    for (auto& f : m_mesh->m_mesh.face) {
+        if (f.IsS() && !f.IsD()) {
+            for (size_t i = 0; i < 3; i++) {
+                if ((!f.FFp(i)->IsS())&&faceN==nullptr) {
+                    faceN = f.FFp(i);
+                }
+            }
+            f.SetD();
+        }
+    }
+    faceN->SetS();
+    clearSelectionRender();
+    fillHole();
 }
 
 std::string SelectingLayer::holeTextPath()

@@ -249,6 +249,14 @@ QMenu::separator {
     <string>C</string>
    </property>
   </action>
+  <action name="actionFlat">
+   <property name="text">
+    <string>压平</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

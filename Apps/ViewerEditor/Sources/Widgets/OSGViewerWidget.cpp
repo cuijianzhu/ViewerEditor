@@ -164,6 +164,23 @@ void OSGViewerWidget::initConnect()
         m_selectingLayer->clearSelection();
         m_selectingLayer->m_mesh->updateOSGNode();
     });
+
+    connect(&g_globalSignal, &GLobalSignal::signal_flat, [&]() {
+        auto camera                   = getOsgViewer()->getCamera();
+        m_selectingLayer->m_vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix();
+        m_statusHandler->removeChild();
+        m_selectingLayer->clearSelectionRender();
+
+        auto image   = grabFramebuffer();
+
+        m_selectingLayer->flat();
+        
+        auto texPath = m_selectingLayer->holeTextPath();
+        image.save(QString::fromLocal8Bit(texPath.c_str()));
+
+        m_selectingLayer->clearSelection();
+        m_selectingLayer->m_mesh->updateOSGNode();
+    });
     connect(&g_globalSignal,
             &GLobalSignal::signal_invertSelect,
             this,
