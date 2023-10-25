@@ -30,6 +30,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionFillHole);
     menuEdit->addAction(ui->actionFlat);
     menuEdit->addAction(ui->actionRemoveSmall);
+    menuEdit->addAction(ui->actionRefresh);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -64,6 +65,10 @@ void FloatTools::initConnect()
 
     connect(ui->actiondeleteFace, &QAction::triggered, [](bool checked) {
         emit g_globalSignal.signal_deleteFace();
+    });
+
+    connect(ui->actionRefresh, &QAction::triggered, [](bool checked) {
+        emit g_globalSignal.signal_refresh();
     });
     connect(ui->actionFillHole, &QAction::triggered, [](bool checked) {
         emit g_globalSignal.signal_fillHole();

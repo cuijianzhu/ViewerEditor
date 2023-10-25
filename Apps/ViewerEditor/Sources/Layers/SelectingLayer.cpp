@@ -278,6 +278,9 @@ void SelectingLayer::flat() {
             f.SetD();
         }
     }
+    vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh->m_mesh);
+    vcg::tri::Clean<MyMesh>::RemoveSmallConnectedComponentsSize(m_mesh->m_mesh, 100);
+
     faceN->SetS();
     clearSelectionRender();
     fillHole();

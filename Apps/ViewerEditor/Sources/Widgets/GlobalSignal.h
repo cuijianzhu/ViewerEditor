@@ -20,6 +20,7 @@ Q_SIGNALS:
     void signal_fillHole();
     void signal_flat();
     void signal_removeSmall();
+    void signal_refresh();
 };
 
 extern GLobalSignal g_globalSignal;

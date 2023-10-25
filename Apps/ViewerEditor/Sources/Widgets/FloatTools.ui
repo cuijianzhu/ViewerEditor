@@ -262,6 +262,14 @@ QMenu::separator {
     <string>删除悬浮物</string>
    </property>
    <property name="shortcut">
+    <string>Q</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="text">
+    <string>刷新模型</string>
+   </property>
+   <property name="shortcut">
     <string>R</string>
    </property>
   </action>

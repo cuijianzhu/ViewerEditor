@@ -157,6 +157,8 @@ void OSGViewerWidget::initConnect()
 
     connect(&g_globalSignal, &GLobalSignal::signal_removeSmall, [&]() { m_mesh->removeSmall();
     });
+    connect(&g_globalSignal, &GLobalSignal::signal_refresh, [&]() { m_mesh->updateOSGNode(); });
+
     connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {
         auto camera    = getOsgViewer()->getCamera();
         m_selectingLayer->m_vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix();
