@@ -32,6 +32,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionRemoveSmall);
     menuEdit->addAction(ui->actionRefresh);
     menuEdit->addAction(ui->actionPickAxes);
+    menuEdit->addAction(ui->actionLassoRegion);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -67,6 +68,11 @@ void FloatTools::initConnect()
     connect(ui->actionLinkFace, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_linkFace();
     });
+
+    connect(ui->actionLassoRegion, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_lassoRegion();
+    });
+
     connect(ui->actionShowBorder, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_showBorder();
     });

@@ -281,6 +281,14 @@ QMenu::separator {
     <string>P</string>
    </property>
   </action>
+  <action name="actionLassoRegion">
+   <property name="text">
+    <string>套索选择</string>
+   </property>
+   <property name="shortcut">
+    <string>A</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

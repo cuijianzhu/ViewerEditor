@@ -22,6 +22,7 @@ Q_SIGNALS:
     void signal_removeSmall();
     void signal_refresh();
     void signal_pickAxes();
+    void signal_lassoRegion();
 };
 
 extern GLobalSignal g_globalSignal;

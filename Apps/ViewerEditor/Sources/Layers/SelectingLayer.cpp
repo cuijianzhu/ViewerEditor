@@ -20,11 +20,19 @@ SelectingLayer::SelectingLayer()
     m_geometry  = new osg::Geometry;
     m_drawArray = new osg::DrawArrays(GL_TRIANGLES, 0, 0);
     m_vec3Array = new osg::Vec3Array;
+    m_dashWireframe = new osg::Geode;
+
+    m_dashWireGeometry = new osg::Geometry;
+    m_dashWireDrawArray = new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, 0);
+    m_dashWireVec3Array = new osg::Vec3Array;
+
     initGeometry();
     initFilled();
     initWireFrame();
+    initDashWireFrame();
     addChild(m_filled);
     addChild(m_wireframe);
+    addChild(m_dashWireframe);
 }
 
 void SelectingLayer::initFilled()
@@ -96,13 +104,52 @@ void SelectingLayer::initWireFrame()
     stateset->setAttributeAndModes(lineWidth,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_wireframe->setStateSet(stateset);
-    m_wireframe->addDrawable(m_geometry);
+    m_dashWireframe->addDrawable(m_geometry);
+}
+
+void SelectingLayer::initDashWireFrame() {
+    osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
+    osg::ref_ptr<osg::PolygonOffset> polyoffset = new osg::PolygonOffset;
+    polyoffset->setFactor(-1.5f);
+    polyoffset->setUnits(-1.5f);
+
+    osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+    polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+    stateset->setAttributeAndModes(polyoffset,
+                                   osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    stateset->setAttributeAndModes(polymode,
+                                   osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+
+    osg::Material* material = new osg::Material;
+    material->setColorMode(osg::Material::OFF);
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
+    material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
+    // except emission... in which we set the color we desire
+    material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0f, 0.0f, 1.0f));
+    stateset->setAttributeAndModes(material,
+                                   osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+
+    stateset->setTextureMode(
+        0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+
+    // set line width
+    osg::LineWidth* lineWidth = new osg::LineWidth;
+    lineWidth->setWidth(2.0);
+    stateset->setAttributeAndModes(lineWidth,
+                                   osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    m_dashWireframe->setStateSet(stateset);
+    m_dashWireframe->addDrawable(m_dashWireGeometry);
 }
 
 void SelectingLayer::initGeometry()
 {
     m_geometry->setVertexArray(m_vec3Array);
     m_geometry->addPrimitiveSet(m_drawArray);
+
+    m_dashWireGeometry->setVertexArray(m_dashWireVec3Array);
+    m_dashWireGeometry->addPrimitiveSet(m_dashWireDrawArray);
 }
 
 void SelectingLayer::updateGeometry()
@@ -120,6 +167,20 @@ void SelectingLayer::updateGeometry()
     m_drawArray->setCount(m_vec3Array->size());
     m_vec3Array->dirty();
     m_geometry->dirtyDisplayList();
+}
+
+void SelectingLayer::updateDashWireGeometry() {
+    m_drawArray->setCount(m_vec3Array->size());
+    m_vec3Array->dirty();
+    m_geometry->dirtyDisplayList();
+}
+
+void SelectingLayer::pushBackDashWire(osg::Vec3 position_) {
+    m_dashWireVec3Array->push_back(position_);
+}
+
+void SelectingLayer::clearDashWire() {
+    m_dashWireVec3Array->clear();
 }
 
 void SelectingLayer::linkSelection() {
