@@ -1,6 +1,10 @@
 #pragma once
 #include <osgGA/GUIEventHandler>
 class SelectingLayer;
+namespace osg
+{
+class MatrixTransform;
+}
 class StatusHandler : public osgGA::GUIEventHandler
 {
 public:
@@ -15,4 +19,5 @@ public:
     osg::ref_ptr<osg::Geode>     m_geode;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
     float                        m_radius = 0.2;
+    osg::ref_ptr<osg::Node>      m_axes;
 };

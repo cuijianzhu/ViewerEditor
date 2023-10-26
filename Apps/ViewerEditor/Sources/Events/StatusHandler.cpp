@@ -4,10 +4,12 @@
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include <osgViewer/Viewer>
+#include "Presets/Axes.h"
 StatusHandler::StatusHandler(osg::ref_ptr<SelectingLayer> selectingLayer)
     : m_selectingLayer(selectingLayer)
 {
     m_geode = new osg::Geode;
+    m_axes  = presets::Axes();
 }
 
 bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
@@ -34,6 +36,11 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
                         intersector->getFirstIntersection();
 
                     osg::Vec3f                       point  = intersection.getLocalIntersectPoint();
+                    viewer->getSceneData()->asGroup()->removeChild(m_axes);
+                    m_axes.release();
+                    m_axes = presets::Axes(intersection.getWorldIntersectPoint(), 5.0f);
+                    viewer->getSceneData()->asGroup()->addChild(m_axes);
+
                     osg::ref_ptr<osg::ShapeDrawable> shape  = new osg::ShapeDrawable(
                         new osg::Sphere(intersection.getWorldIntersectPoint(), m_radius));
                     shape->setColor({1.0, 0.0, 0.0, 0.2});
