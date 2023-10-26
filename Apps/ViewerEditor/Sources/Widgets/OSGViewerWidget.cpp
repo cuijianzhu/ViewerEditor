@@ -118,6 +118,7 @@ void OSGViewerWidget::mouseReleaseEvent(QMouseEvent* event)
 {
     osgQOpenGLWidget::mouseReleaseEvent(event);
     m_statusHandler->isPressing = false;
+    m_statusHandler->removeChild();
 }
 
 void OSGViewerWidget::mouseDoubleClickEvent(QMouseEvent* event)
@@ -150,6 +151,9 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_linkFace, [&]() {
             m_selectingLayer->linkSelection();
         });
+    connect(&g_globalSignal, &GLobalSignal::signal_pickAxes, [&]() {
+        m_statusHandler->isPickAxes = true;
+    });
     connect(&g_globalSignal, &GLobalSignal::signal_showBorder, [&]() {
         m_selectingLayer->showBorder();
     });
@@ -209,7 +213,6 @@ void OSGViewerWidget::init()
     m_statusHandler  = new StatusHandler(m_selectingLayer);
     m_root->addChild(m_mesh);
     m_root->addChild(m_selectingLayer);
-    m_root->addChild(m_statusHandler->m_axes);
 
     m_cameraManipulator      = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();

@@ -273,6 +273,14 @@ QMenu::separator {
     <string>R</string>
    </property>
   </action>
+  <action name="actionPickAxes">
+   <property name="text">
+    <string>放置参考点</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

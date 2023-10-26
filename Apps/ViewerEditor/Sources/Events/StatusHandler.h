@@ -16,8 +16,10 @@ public:
     bool                         isSelecting       = false;
     bool                         isInvertSelection = false;
     bool                         isPressing        = false;
+    bool                         isPickAxes        = false;
+
     osg::ref_ptr<osg::Geode>     m_geode;
+    osg::ref_ptr<osg::Node>      m_axes;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
     float                        m_radius = 0.2;
-    osg::ref_ptr<osg::Node>      m_axes;
 };

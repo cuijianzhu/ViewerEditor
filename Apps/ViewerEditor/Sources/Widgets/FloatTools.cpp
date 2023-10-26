@@ -31,6 +31,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionFlat);
     menuEdit->addAction(ui->actionRemoveSmall);
     menuEdit->addAction(ui->actionRefresh);
+    menuEdit->addAction(ui->actionPickAxes);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -55,6 +56,13 @@ void FloatTools::initConnect()
     connect(ui->actionInvertSelect, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_invertSelect(checked);
         ui->actionSelect->setChecked(false);
+    });
+    connect(ui->actionPickAxes, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_pickAxes();
+        ui->actionSelect->setChecked(false);
+        ui->actionInvertSelect->setChecked(false);
+        emit ui->actionSelect->triggered();
+        emit ui->actionInvertSelect->triggered();
     });
     connect(ui->actionLinkFace, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_linkFace();
