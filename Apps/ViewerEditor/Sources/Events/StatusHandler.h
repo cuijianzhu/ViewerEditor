@@ -17,6 +17,7 @@ public:
     bool                         isInvertSelection = false;
     bool                         isPressing        = false;
     bool                         isPickAxes        = false;
+    bool                         isLassoRegion       = false;
 
     osg::ref_ptr<osg::Geode>     m_geode;
     osg::ref_ptr<osg::Node>      m_axes;

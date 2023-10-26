@@ -170,13 +170,17 @@ void SelectingLayer::updateGeometry()
 }
 
 void SelectingLayer::updateDashWireGeometry() {
-    m_drawArray->setCount(m_vec3Array->size());
-    m_vec3Array->dirty();
-    m_geometry->dirtyDisplayList();
+    if (m_dashWireVec3Array->size() < 2) {
+        return;
+    }
+    m_dashWireDrawArray->setCount(m_dashWireVec3Array->size());
+    m_dashWireDrawArray->dirty();
+    m_dashWireGeometry->dirtyDisplayList();
 }
 
 void SelectingLayer::pushBackDashWire(osg::Vec3 position_) {
     m_dashWireVec3Array->push_back(position_);
+    updateDashWireGeometry();
 }
 
 void SelectingLayer::clearDashWire() {

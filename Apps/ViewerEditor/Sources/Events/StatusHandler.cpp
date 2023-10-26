@@ -70,11 +70,39 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
                     viewer->getSceneData()->asGroup()->removeChild(m_axes);
                     m_axes = presets::Axes(intersection.getWorldIntersectPoint());
                     viewer->getSceneData()->asGroup()->addChild(m_axes);
+                    osg::Vec3 eye, center, up;
+                    viewer->getCamera()->getViewMatrixAsLookAt(eye, center, up);
+                    viewer->getCameraManipulator()->setHomePosition(
+                        eye, intersection.getWorldIntersectPoint(), up);
                 }
             }
             isPickAxes = false;
         }
     }
+
+    if (isLassoRegion) {
+        osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+        auto               root   = viewer->getSceneData()->asGroup();
+        if (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE &&
+            ea.getButton() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON) {
+            osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+            if (viewer) {
+                osg::ref_ptr<osgUtil::LineSegmentIntersector> intersector =
+                    new osgUtil::LineSegmentIntersector(
+                        osgUtil::Intersector::WINDOW, ea.getX(), ea.getY());
+
+                osgUtil::IntersectionVisitor iv(intersector.get());
+                viewer->getCamera()->accept(iv);
+
+                if (intersector->containsIntersections()) {
+                    const osgUtil::LineSegmentIntersector::Intersection& intersection =
+                        intersector->getFirstIntersection();
+                    m_selectingLayer->pushBackDashWire(intersection.getWorldIntersectPoint());
+                }
+            }
+        }
+    }
+
 
     return false;
 }
