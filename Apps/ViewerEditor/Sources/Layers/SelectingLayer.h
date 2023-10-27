@@ -25,6 +25,9 @@ public:
     void               flat();
     std::string        holeTextPath();
     void               setupMesh(osg::ref_ptr<Mesh>);
+
+    void               hide();
+    void               show();
     osg::ref_ptr<Mesh> m_mesh;
     osg::Matrixd       m_vpmMatrix;
 

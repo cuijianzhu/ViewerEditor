@@ -18,7 +18,8 @@ public:
     bool                         isPressing        = false;
     bool                         isPickAxes        = false;
     bool                         isLassoRegion       = false;
-
+    void                         hide();
+    void                         show();
     osg::ref_ptr<osg::Geode>     m_geode;
     osg::ref_ptr<osg::Node>      m_axes;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;

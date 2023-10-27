@@ -111,3 +111,13 @@ void StatusHandler::removeChild() {
     m_selectingLayer->updateGeometry();
     m_geode->removeChild(0, m_geode->getNumChildren());
 }
+
+void StatusHandler::hide() {
+    m_geode->setNodeMask(0x0);
+    m_axes->setNodeMask(0x0);
+}
+
+void StatusHandler::show() {
+    m_geode->setNodeMask(0xffffffff);
+    m_axes->setNodeMask(0xffffffff);
+}

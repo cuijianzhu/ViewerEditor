@@ -313,6 +313,14 @@ QMenu::separator {
     <string>Z</string>
    </property>
   </action>
+  <action name="actionReTexture">
+   <property name="text">
+    <string>重贴纹理</string>
+   </property>
+   <property name="shortcut">
+    <string>V</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

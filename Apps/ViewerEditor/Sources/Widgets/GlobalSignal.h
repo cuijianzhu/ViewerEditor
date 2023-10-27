@@ -24,6 +24,7 @@ Q_SIGNALS:
     void signal_refresh();
     void signal_pickAxes();
     void signal_lassoRegion();
+    void signal_reTexture();
 
 
     // View

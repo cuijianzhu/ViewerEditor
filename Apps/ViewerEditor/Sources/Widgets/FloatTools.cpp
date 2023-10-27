@@ -36,6 +36,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionRefresh);
     menuEdit->addAction(ui->actionPickAxes);
     menuEdit->addAction(ui->actionLassoRegion);
+    menuEdit->addAction(ui->actionReTexture);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
@@ -57,6 +58,10 @@ void FloatTools::initConnect()
 
     connect(ui->actionWhiteShow, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_noTexture();
+    });
+
+    connect(ui->actionReTexture, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_reTexture();
     });
 
     connect(ui->actionTexture, &QAction::triggered, [&](bool checked) {

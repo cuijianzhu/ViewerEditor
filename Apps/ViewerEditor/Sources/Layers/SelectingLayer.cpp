@@ -363,3 +363,11 @@ void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)
 {
     m_mesh = mesh_;
 }
+
+void SelectingLayer::hide() {
+    setNodeMask(0x0);
+}
+
+void SelectingLayer::show() {
+    setNodeMask(0xffffffff);
+}

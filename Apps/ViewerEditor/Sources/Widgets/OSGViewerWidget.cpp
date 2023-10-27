@@ -171,6 +171,17 @@ void OSGViewerWidget::initConnect()
         m_selectingLayer->clearSelection();
         });
 
+    connect(&g_globalSignal, &GLobalSignal::signal_reTexture, [&]() { 
+        m_mesh->originRender();
+        m_statusHandler->hide();
+        m_selectingLayer->hide();
+        getOsgViewer()->frame();
+        auto image = grabFramebuffer();
+        image.save("D:/test.png");
+        m_statusHandler->show();
+        m_selectingLayer->show();
+    });
+
     connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {
         auto camera    = getOsgViewer()->getCamera();
         m_selectingLayer->m_vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix();
