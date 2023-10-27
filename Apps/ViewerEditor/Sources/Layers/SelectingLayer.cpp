@@ -303,7 +303,6 @@ void SelectingLayer::fillHole() {
                         }
                     }
 
-                    updateGeometry();
                     //m_holeNo++;
                     //m_mesh->m_TexNo++;
                     //auto imageText ="Tex" + std::to_string(m_holeNo) + ".png";
