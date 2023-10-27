@@ -42,6 +42,9 @@ void Mesh::read(const std::string& path_)
     boost::filesystem::path path = path_;
     m_rootDir                    = path.parent_path().string();
     setName("meshNode");
+    m_originFaceNumber = m_mesh.face.size();
+    m_originTextureNumber = m_mesh.textures.size();
+
     updateOSGNode();
 }
 
@@ -111,7 +114,8 @@ void Mesh::updateOSGNode()
     std::vector<TexCoordMap>                         vtexcoordMap;
     m_TexNo = m_mesh.textures.size();
 
-    for (size_t i = 0; i < 1 || i < m_mesh.textures.size(); i++) {
+
+    for (size_t i = 0; i < 1 || i < (m_isOrigin ? m_originTextureNumber : m_mesh.textures.size()); i++) {
         osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;
         vtexCoords.push_back(texCoords);
 
@@ -127,8 +131,10 @@ void Mesh::updateOSGNode()
     vtexcoordMap.resize(m_mesh.textures.size());
 
 
-    for (auto& f : m_mesh.face) {
-        if (!f.IsD()) {
+    for (int fn = 0; fn < (m_isOrigin ? m_originFaceNumber : m_mesh.face.size()); fn++) {
+        auto& f = m_mesh.face[fn];
+        if (m_isOrigin||!f.IsD())
+    {
             for (size_t i = 0; i < 3; i++) {
                 auto&                   v           = f.V(i);
                 short                   nTex        = f.WT(i).n();
@@ -230,5 +236,15 @@ void Mesh::smooth() {
     vcg::tri::UpdateTopology<MyMesh>::VertexFace(m_mesh);
     vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(m_mesh);
     vcg::tri::Smooth<MyMesh>::VertexCoordTaubin(m_mesh, 20, 0.7, -0.7, true);
+    updateOSGNode();
+}
+
+void Mesh::originRender() {
+    m_isOrigin = true;
+    updateOSGNode();
+}
+
+void Mesh::newRender() {
+    m_isOrigin = false;
     updateOSGNode();
 }

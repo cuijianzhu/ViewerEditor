@@ -17,11 +17,15 @@ public:
     void                        noTexute();
     void                        withTexture();
     void                        smooth();
-
+    void                        originRender();
+    void                        newRender();
 
     osg::ref_ptr<osg::Geometry> m_geometry;
     std::string                 m_rootDir;
     MyMesh                      m_mesh;
     int                         m_TexNo;
+    int                         m_originFaceNumber = 0;
+    int                         m_originTextureNumber = 0;
     bool                        m_withTexture = true;
+    bool                        m_isOrigin = false;
 };

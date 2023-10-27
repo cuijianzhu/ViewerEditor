@@ -188,8 +188,9 @@ void OSGViewerWidget::initConnect()
         m_statusHandler->removeChild();
         m_selectingLayer->clearSelectionRender();
 
+        m_mesh->originRender();
         auto image   = grabFramebuffer();
-
+        m_mesh->m_isOrigin = false;
         m_selectingLayer->flat();
         
         auto texPath = m_selectingLayer->holeTextPath();
