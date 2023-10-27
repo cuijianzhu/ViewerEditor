@@ -289,6 +289,22 @@ QMenu::separator {
     <string>A</string>
    </property>
   </action>
+  <action name="actionWhiteShow">
+   <property name="text">
+    <string>白模</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="actionTexture">
+   <property name="text">
+    <string>纹理模型</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

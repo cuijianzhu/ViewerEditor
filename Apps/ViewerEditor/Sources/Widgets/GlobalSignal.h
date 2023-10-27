@@ -23,6 +23,11 @@ Q_SIGNALS:
     void signal_refresh();
     void signal_pickAxes();
     void signal_lassoRegion();
+
+
+    // View
+    void signal_noTexture();
+    void signal_withTexture();
 };
 
 extern GLobalSignal g_globalSignal;

@@ -16,6 +16,8 @@ FloatTools::FloatTools(QWidget* parent)
 
     QMenu* menuView = new QMenu(this);
     menuView->addAction(ui->actionHome);
+    menuView->addAction(ui->actionTexture);
+    menuView->addAction(ui->actionWhiteShow);
     ui->toolButtonView->setMenu(menuView);
 
     QMenu* menuEdit = new QMenu(this);
@@ -51,6 +53,20 @@ void FloatTools::initConnect()
         emit g_globalSignal.signal_select(checked);
         ui->actionInvertSelect->setChecked(false);
     });
+
+    connect(ui->actionWhiteShow, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_noTexture();
+    });
+
+    connect(ui->actionTexture, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_withTexture();
+    });
+
+    connect(ui->actionSelect, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_select(checked);
+        ui->actionInvertSelect->setChecked(false);
+    });
+
     connect(ui->actionClearSelect, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_clearSelect();
     });

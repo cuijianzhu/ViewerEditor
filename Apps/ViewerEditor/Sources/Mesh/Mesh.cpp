@@ -12,6 +12,7 @@
 #include <vector>
 #include <wrap/io_trimesh/import.h>
 #include <wrap/io_trimesh/export.h>
+#include <osgUtil/SmoothingVisitor>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -28,9 +29,7 @@ template<> struct hash<std::pair<float, float>>
 }   // namespace std
 
 Mesh::Mesh() {
-    osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
-    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
-    setStateSet(stateset);
+    withTexture();
 }
 
 void Mesh::read(const std::string& path_)
@@ -149,7 +148,9 @@ void Mesh::updateOSGNode()
     for (size_t i = 0; i < vgeometry.size(); i++) {
         vgeometry[i]->setVertexArray(vvertices[i]);
         vgeometry[i]->addPrimitiveSet(vdrawElements[i]);
-        vgeometry[i]->setTexCoordArray(0, vtexCoords[i]);
+        if (m_withTexture) {
+            vgeometry[i]->setTexCoordArray(0, vtexCoords[i]);
+        }
         osg::ref_ptr<osg::StateSet> stateset = vgeometry[i]->getOrCreateStateSet();
 
         // Œ∆¿Ì
@@ -159,16 +160,24 @@ void Mesh::updateOSGNode()
             osg::ref_ptr<osg::Image> image =
                 osgDB::readImageFile(textPath.generic_path().generic_string());
             osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
-            stateset->setTextureAttributeAndModes(0, texture);
+            if (m_withTexture) {
+                stateset->setTextureAttributeAndModes(0, texture);
+            }
         }
+        vgeometry[i]->setUseVertexBufferObjects(true);
 
-        // ≤ƒ÷ 
-        osg::ref_ptr<osg::Material> osg_material = new osg::Material;
-        stateset->setAttribute(osg_material);
-        stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-        osg_material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        osg_material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        osg_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        if (m_withTexture) {
+            // ≤ƒ÷ 
+            osg::ref_ptr<osg::Material> osg_material = new osg::Material;
+            stateset->setAttribute(osg_material);
+            stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+            osg_material->setAmbient(osg::Material::FRONT_AND_BACK,
+            osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            osg_material->setDiffuse(osg::Material::FRONT_AND_BACK,
+            osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            osg_material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+        osgUtil::SmoothingVisitor::smooth(*vgeometry[i]);
         osg::ref_ptr<osg::Geode> geode = new osg::Geode;
         geode->addDrawable(vgeometry[i]);
         addChild(geode);
@@ -191,5 +200,21 @@ void Mesh::deleteFace()
 void Mesh::removeSmall() {
     vcg::tri::UpdateTopology<MyMesh>::FaceFace(m_mesh);
     vcg::tri::Clean<MyMesh>::RemoveSmallConnectedComponentsSize(m_mesh, 100);
+    updateOSGNode();
+}
+
+void Mesh::noTexute() {
+    m_withTexture = false;
+    osg::ref_ptr<osg::StateSet> stateset = new osg::StateSet;
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    setStateSet(stateset);
+    updateOSGNode();
+}
+
+void Mesh::withTexture() {
+    m_withTexture = true;
+    osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+    setStateSet(stateset);
     updateOSGNode();
 }

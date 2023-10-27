@@ -14,8 +14,12 @@ public:
     void                        updateOSGNode();
     void                        deleteFace();
     void                        removeSmall();
+    void                        noTexute();
+    void                        withTexture();
+
     osg::ref_ptr<osg::Geometry> m_geometry;
     std::string                 m_rootDir;
     MyMesh                      m_mesh;
     int                         m_TexNo;
+    bool                        m_withTexture = true;
 };

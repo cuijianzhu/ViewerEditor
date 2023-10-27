@@ -164,6 +164,8 @@ void OSGViewerWidget::initConnect()
     });
     connect(&g_globalSignal, &GLobalSignal::signal_refresh, [&]() { m_mesh->updateOSGNode(); });
     connect(&g_globalSignal, &GLobalSignal::signal_lassoRegion, [&]() { m_statusHandler->isLassoRegion = true; });
+    connect(&g_globalSignal, &GLobalSignal::signal_withTexture, [&]() { m_mesh->withTexture(); });
+    connect(&g_globalSignal, &GLobalSignal::signal_noTexture, [&]() { m_mesh->noTexute(); });
 
     connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {
         auto camera    = getOsgViewer()->getCamera();
@@ -213,6 +215,7 @@ void OSGViewerWidget::init()
     m_statusHandler  = new StatusHandler(m_selectingLayer);
     m_root->addChild(m_mesh);
     m_root->addChild(m_selectingLayer);
+    //m_root->addChild(osgDB::readNodeFile("D:/data/ply/test1.ply"));
 
     m_cameraManipulator      = new osgGA::MultiTouchTrackballManipulator();
     auto standardManipulator = (osgGA::StandardManipulator*)m_cameraManipulator.get();
