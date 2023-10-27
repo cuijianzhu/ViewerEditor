@@ -13,6 +13,7 @@
 #include <wrap/io_trimesh/import.h>
 #include <wrap/io_trimesh/export.h>
 #include <osgUtil/SmoothingVisitor>
+#include <vcg/complex/algorithms/smooth.h>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -64,9 +65,15 @@ void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
             vcg::Distance(f.P(1), center) < raduis_ || vcg::Distance(f.P(2), center) < raduis_) {
             if (isIvert) {
                 f.ClearS();
+                for (size_t k = 0; k < 3; k++) {
+                    f.V(k)->ClearS();
+                }
             }
             else {
                 f.SetS();
+                for (size_t k = 0; k < 3; k++) {
+                    f.V(k)->SetS();
+                }
             }
             continue;
         }
@@ -216,5 +223,12 @@ void Mesh::withTexture() {
     osg::ref_ptr<osg::StateSet>      stateset   = new osg::StateSet;
     stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
     setStateSet(stateset);
+    updateOSGNode();
+}
+
+void Mesh::smooth() {
+    vcg::tri::UpdateTopology<MyMesh>::VertexFace(m_mesh);
+    vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(m_mesh);
+    vcg::tri::Smooth<MyMesh>::VertexCoordTaubin(m_mesh, 20, 0.7, -0.7, true);
     updateOSGNode();
 }

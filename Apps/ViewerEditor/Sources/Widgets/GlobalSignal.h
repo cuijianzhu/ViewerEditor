@@ -19,6 +19,7 @@ Q_SIGNALS:
     void signal_showBorder();
     void signal_fillHole();
     void signal_flat();
+    void signal_smooth();
     void signal_removeSmall();
     void signal_refresh();
     void signal_pickAxes();

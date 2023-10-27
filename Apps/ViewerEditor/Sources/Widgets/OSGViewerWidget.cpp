@@ -166,6 +166,10 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_lassoRegion, [&]() { m_statusHandler->isLassoRegion = true; });
     connect(&g_globalSignal, &GLobalSignal::signal_withTexture, [&]() { m_mesh->withTexture(); });
     connect(&g_globalSignal, &GLobalSignal::signal_noTexture, [&]() { m_mesh->noTexute(); });
+    connect(&g_globalSignal, &GLobalSignal::signal_smooth, [&]() { 
+        m_mesh->smooth();
+        m_selectingLayer->clearSelection();
+        });
 
     connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {
         auto camera    = getOsgViewer()->getCamera();

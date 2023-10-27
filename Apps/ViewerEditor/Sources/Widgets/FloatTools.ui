@@ -305,6 +305,14 @@ QMenu::separator {
     <string>1</string>
    </property>
   </action>
+  <action name="actionSmooth">
+   <property name="text">
+    <string>平滑</string>
+   </property>
+   <property name="shortcut">
+    <string>Z</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

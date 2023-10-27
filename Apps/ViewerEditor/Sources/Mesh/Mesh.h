@@ -16,6 +16,8 @@ public:
     void                        removeSmall();
     void                        noTexute();
     void                        withTexture();
+    void                        smooth();
+
 
     osg::ref_ptr<osg::Geometry> m_geometry;
     std::string                 m_rootDir;

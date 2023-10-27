@@ -206,6 +206,7 @@ void SelectingLayer::linkSelection() {
 
 void SelectingLayer::clearSelection() {
     vcg::tri::UpdateFlags<MyMesh>::FaceClearS(m_mesh->m_mesh);
+    vcg::tri::UpdateFlags<MyMesh>::VertexClearS(m_mesh->m_mesh);
     updateGeometry();
 }
 
@@ -350,6 +351,7 @@ void SelectingLayer::flat() {
     clearSelectionRender();
     fillHole();
 }
+
 
 std::string SelectingLayer::holeTextPath()
 {
