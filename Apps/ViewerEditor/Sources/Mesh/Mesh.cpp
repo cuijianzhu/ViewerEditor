@@ -14,6 +14,7 @@
 #include <wrap/io_trimesh/export.h>
 #include <osgUtil/SmoothingVisitor>
 #include <vcg/complex/algorithms/smooth.h>
+#include <QImage>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -43,8 +44,12 @@ void Mesh::read(const std::string& path_)
     m_rootDir                    = path.parent_path().string();
     setName("meshNode");
     m_originFaceNumber = m_mesh.face.size();
+    QImage grayImage(256, 256, QImage::Format_RGB32);
+    grayImage.fill(Qt::gray);
+    boost::filesystem::path grayImagePath = path.parent_path() / "gray.png";
+    grayImage.save(QString::fromLocal8Bit(grayImagePath.generic_path().generic_string().c_str()));
+    m_mesh.textures.push_back("gray.png");
     m_originTextureNumber = m_mesh.textures.size();
-
     updateOSGNode();
 }
 

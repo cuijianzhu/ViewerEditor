@@ -292,7 +292,7 @@ void SelectingLayer::fillHole() {
                         auto& fff = m_mesh->m_mesh.face[fi];
                         fff.SetS();
                         for (size_t k = 0; k < 3; k++) {
-                            m_mesh->m_mesh.face[fi].WT(k).n() = m_mesh->m_TexNo;
+                            m_mesh->m_mesh.face[fi].WT(k).n() = m_mesh->m_originTextureNumber-1;
                             auto uvCoord =
                                 osg::Vec3(fff.V(k)->P().X(), fff.V(k)->P().Y(), fff.V(k)->P().Z()) *
                                 m_vpmMatrix;
@@ -304,23 +304,23 @@ void SelectingLayer::fillHole() {
                     }
 
                     updateGeometry();
-                    m_holeNo++;
-                    m_mesh->m_TexNo++;
-                    auto imageText ="Tex" + std::to_string(m_holeNo) + ".png";
-                    m_mesh->m_mesh.textures.push_back(imageText);
+                    //m_holeNo++;
+                    //m_mesh->m_TexNo++;
+                    //auto imageText ="Tex" + std::to_string(m_holeNo) + ".png";
+                    //m_mesh->m_mesh.textures.push_back(imageText);
 
-                    // 创建一个文件系统监视器
-                    QFileSystemWatcher* watcher = new QFileSystemWatcher;
+                    //// 创建一个文件系统监视器
+                    //QFileSystemWatcher* watcher = new QFileSystemWatcher;
 
-                    // 添加要监视的文件
-                    QString filePath = QString::fromLocal8Bit(holeTextPath().c_str());
-                    watcher->addPath(filePath);
+                    //// 添加要监视的文件
+                    //QString filePath = QString::fromLocal8Bit(holeTextPath().c_str());
+                    //watcher->addPath(filePath);
 
-                    // 连接文件系统监视器的fileChanged信号到槽函数
-                    QObject::connect(watcher,
-                                     &QFileSystemWatcher::fileChanged,
-                                     [&](const QString& path) { m_mesh->updateOSGNode();
-                        });
+                    //// 连接文件系统监视器的fileChanged信号到槽函数
+                    //QObject::connect(watcher,
+                    //                 &QFileSystemWatcher::fileChanged,
+                    //                 [&](const QString& path) { m_mesh->updateOSGNode();
+                    //    });
                     return;
                 }
             }

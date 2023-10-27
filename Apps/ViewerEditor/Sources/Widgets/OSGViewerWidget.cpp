@@ -175,9 +175,9 @@ void OSGViewerWidget::initConnect()
         auto camera    = getOsgViewer()->getCamera();
         m_selectingLayer->m_vpmMatrix = camera->getViewMatrix() * camera->getProjectionMatrix();
         m_selectingLayer->fillHole();
-        auto texPath = m_selectingLayer->holeTextPath();
+        /*auto texPath = m_selectingLayer->holeTextPath();
         auto image = grabFramebuffer();
-        image.save(QString::fromLocal8Bit(texPath.c_str()));
+        image.save(QString::fromLocal8Bit(texPath.c_str()));*/
         m_selectingLayer->clearSelection();
         m_selectingLayer->m_mesh->updateOSGNode();
     });
