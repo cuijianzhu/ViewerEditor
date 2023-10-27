@@ -16,7 +16,7 @@ find_package(Qt5 COMPONENTS
 find_package(Qt5AdvancedDocking REQUIRED HINTS "D:/ThirdParty/QtADS/lib/cmake/qt5advanceddocking")
 find_package(SARibbon REQUIRED HINTS "D:/ThirdParty/SARibbon/cmake")
 find_package(VCG REQUIRED)
-find_package(OpenSceneGraph 2.0.0 REQUIRED osgViewer osgDB osgUtil osgQt5 osgGA osgEarth osgText)
+find_package(OpenSceneGraph 2.0.0 REQUIRED osgViewer osgDB osgUtil osgGA osgText)
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
 find_package(VCG REQUIRED)
 find_package (Eigen3 REQUIRED)
@@ -30,9 +30,16 @@ file(GLOB_RECURSE UI_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
 set(QRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Resources/resources.qrc)
 set(APPRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Resources/appicon.rc)
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${CPP_HEAD_FILES} ${CPP_SOUCE_FILES} ${UI_FILES})
+set(OSGQT_HEAD 
+${CMAKE_CURRENT_SOURCE_DIR}/Sources/Vendors/osgQt/osgQOpenGL/osgQOpenGLWidget
+${CMAKE_CURRENT_SOURCE_DIR}/Sources/Vendors/osgQt/osgQOpenGL/osgQOpenGLWindow
+${CMAKE_CURRENT_SOURCE_DIR}/Sources/Vendors/osgQt/osgQOpenGL/OSGRenderer
+)
+QT5_WRAP_CPP(MOC_SOURCES ${OSGQT_HEAD})
 
-add_executable(${TARGET_NAME} ${CPP_HEAD_FILES} ${CPP_SOUCE_FILES} ${UI_FILES} ${QRC_FILE} ${APPRC_FILE})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${CPP_HEAD_FILES} ${CPP_SOUCE_FILES} ${UI_FILES} ${OSGQT_HEAD})
+
+add_executable(${TARGET_NAME} ${CPP_HEAD_FILES} ${CPP_SOUCE_FILES} ${UI_FILES} ${QRC_FILE} ${APPRC_FILE} ${MOC_SOURCES} ${OSGQT_HEAD})
 
 set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17 OUTPUT_NAME ${PROJECT_NAME})
 set_target_properties(${TARGET_NAME} PROPERTIES FOLDER Apps)
@@ -60,6 +67,7 @@ target_include_directories(
   ${TARGET_NAME} 
   PUBLIC 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Sources>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Sources/Vendors/osgQt>
   ${OPENSCENEGRAPH_INCLUDE_DIRS}
   ${VCG_INCLUDE_DIRS}
 )

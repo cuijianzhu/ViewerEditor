@@ -7,7 +7,6 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
-#include <osgEarth/Registry>
 #include <osgGA/MultiTouchTrackballManipulator>
 #include <osgViewer/Viewer>
 

@@ -3,7 +3,7 @@
 
 #include <QPoint>
 #include <osg/ref_ptr>
-#include <osgQOpenGL/osgQOpenGLWidget>
+#include "osgQOpenGL/osgQOpenGLWidget"
 namespace osgGA {
 class CameraManipulator;
 }
