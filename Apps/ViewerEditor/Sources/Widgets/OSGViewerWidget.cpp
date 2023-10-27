@@ -177,9 +177,16 @@ void OSGViewerWidget::initConnect()
         m_selectingLayer->hide();
         getOsgViewer()->frame();
         auto image = grabFramebuffer();
-        image.save("D:/test.png");
+        auto camera = getOsgViewer()->getCamera();
+        std::string texName = m_mesh->reTexture(camera->getViewMatrix() * camera->getProjectionMatrix());
+        QString texPath = QString::fromLocal8Bit("%1/%2")
+                              .arg(QString::fromLocal8Bit(m_mesh->m_rootDir.c_str()))
+                              .arg(QString::fromLocal8Bit(texName.c_str()));
+        std::cout << "texpath: " << texPath.toLocal8Bit().constData() << std::endl;
+        image.save(texPath);
         m_statusHandler->show();
         m_selectingLayer->show();
+        m_mesh->updateOSGNode();
     });
 
     connect(&g_globalSignal, &GLobalSignal::signal_fillHole, [&]() {

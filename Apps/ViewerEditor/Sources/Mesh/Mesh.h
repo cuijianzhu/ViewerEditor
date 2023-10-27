@@ -19,10 +19,12 @@ public:
     void                        smooth();
     void                        originRender();
     void                        newRender();
+    std::string                 reTexture(osg::Matrixd vpmMatrix);
 
     osg::ref_ptr<osg::Geometry> m_geometry;
     std::string                 m_rootDir;
     MyMesh                      m_mesh;
+    MyMesh                      m_originMesh;
     int                         m_TexNo;
     int                         m_originFaceNumber = 0;
     int                         m_originTextureNumber = 0;

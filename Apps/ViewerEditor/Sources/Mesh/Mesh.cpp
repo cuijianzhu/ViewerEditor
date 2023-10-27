@@ -15,6 +15,8 @@
 #include <osgUtil/SmoothingVisitor>
 #include <vcg/complex/algorithms/smooth.h>
 #include <QImage>
+#include <chrono>
+#include <functional>
 namespace std {
 template<> struct hash<std::pair<float, float>>
 {
@@ -40,6 +42,7 @@ void Mesh::read(const std::string& path_)
     vcg::tri::RequirePerVertexTexCoord(m_mesh);
     vcg::tri::RequirePerFaceWedgeTexCoord(m_mesh);
     vcg::tri::io::Importer<MyMesh>::Open(m_mesh, path_.c_str());
+    vcg::tri::Append<MyMesh, MyMesh>::MeshCopy(m_originMesh, m_mesh);
     boost::filesystem::path path = path_;
     m_rootDir                    = path.parent_path().string();
     setName("meshNode");
@@ -120,7 +123,7 @@ void Mesh::updateOSGNode()
     m_TexNo = m_mesh.textures.size();
 
 
-    for (size_t i = 0; i < 1 || i < (m_isOrigin ? m_originTextureNumber : m_mesh.textures.size()); i++) {
+    for (size_t i = 0; i < 1 || i < m_mesh.textures.size(); i++) {
         osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;
         vtexCoords.push_back(texCoords);
 
@@ -136,14 +139,15 @@ void Mesh::updateOSGNode()
     vtexcoordMap.resize(m_mesh.textures.size());
 
 
-    for (int fn = 0; fn < (m_isOrigin ? m_originFaceNumber : m_mesh.face.size()); fn++) {
+    for (int fn = 0; fn < m_mesh.face.size(); fn++) {
         auto& f = m_mesh.face[fn];
-        if (m_isOrigin||!f.IsD())
-    {
+        if (!f.IsD())
+        {
             for (size_t i = 0; i < 3; i++) {
-                auto&                   v           = f.V(i);
+                auto                   v           = f.V(i);
                 short                   nTex        = f.WT(i).n();
                 std::pair<float, float> texCoord    = std::make_pair(f.WT(i).u(), f.WT(i).v());
+               
                 auto&                   texcoordMap = vtexcoordMap[nTex];
                 if (texcoordMap.find(texCoord) == texcoordMap.end()) {
                     osg::Vec3 vertex = osg::Vec3(v->P().X(), v->P().Y(), v->P().Z());
@@ -245,11 +249,132 @@ void Mesh::smooth() {
 }
 
 void Mesh::originRender() {
-    m_isOrigin = true;
-    updateOSGNode();
+    // 删除所有Drawable
+    removeChild(0, getNumChildren());
+    typedef std::unordered_map<std::pair<float, float>, std::tuple<short, osg::Vec3, size_t>>
+                                                     TexCoordMap;
+    std::vector<osg::ref_ptr<osg::Vec3Array>>        vvertices;
+    std::vector<osg::ref_ptr<osg::DrawElementsUInt>> vdrawElements;
+    std::vector<osg::ref_ptr<osg::Vec2Array>>        vtexCoords;
+    std::vector<osg::ref_ptr<osg::Geometry>>         vgeometry;
+    std::vector<TexCoordMap>                         vtexcoordMap;
+
+    for (size_t i = 0; i < 1 || i < m_originMesh.textures.size(); i++) {
+        osg::ref_ptr<osg::Vec2Array> texCoords = new osg::Vec2Array;
+        vtexCoords.push_back(texCoords);
+
+        osg::ref_ptr<osg::DrawElementsUInt> drawElements =
+            new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES);
+        vdrawElements.push_back(drawElements);
+        osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+        vgeometry.push_back(geometry);
+
+        osg::ref_ptr<osg::Vec3Array> vertices = new osg::Vec3Array;
+        vvertices.push_back(vertices);
+    }
+    vtexcoordMap.resize(m_originMesh.textures.size());
+
+
+    for (int fn = 0; fn < m_originMesh.face.size(); fn++) {
+        auto& f = m_originMesh.face[fn];
+        if (!f.IsD()) {
+            for (size_t i = 0; i < 3; i++) {
+                auto                    v        = f.V(i);
+                short                   nTex     = f.WT(i).n();
+                std::pair<float, float> texCoord = std::make_pair(f.WT(i).u(), f.WT(i).v());
+
+                auto& texcoordMap = vtexcoordMap[nTex];
+                if (texcoordMap.find(texCoord) == texcoordMap.end()) {
+                    osg::Vec3 vertex = osg::Vec3(v->P().X(), v->P().Y(), v->P().Z());
+                    std::tuple<short, osg::Vec3, size_t> tuple(
+                        f.WT(i).n(), vertex, texcoordMap.size());
+                    texcoordMap[texCoord] = tuple;
+                    vvertices[nTex]->push_back(vertex);
+                    vtexCoords[nTex]->push_back({texCoord.first, texCoord.second});
+                }
+
+                auto   tuple         = texcoordMap[texCoord];
+                size_t texCoordIndex = std::get<2>(tuple);
+
+                vdrawElements[nTex]->push_back(texCoordIndex);
+            }
+        }
+    }
+
+
+    for (size_t i = 0; i < vgeometry.size(); i++) {
+        vgeometry[i]->setVertexArray(vvertices[i]);
+        vgeometry[i]->addPrimitiveSet(vdrawElements[i]);
+        if (m_withTexture) {
+            vgeometry[i]->setTexCoordArray(0, vtexCoords[i]);
+        }
+        osg::ref_ptr<osg::StateSet> stateset = vgeometry[i]->getOrCreateStateSet();
+
+        // 纹理
+        if (m_originMesh.textures.size() != 0) {
+            boost::filesystem::path textPath =
+                boost::filesystem::path(m_rootDir) / m_originMesh.textures[i];
+            osg::ref_ptr<osg::Image> image =
+                osgDB::readImageFile(textPath.generic_path().generic_string());
+            osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D(image);
+            if (m_withTexture) {
+                stateset->setTextureAttributeAndModes(0, texture);
+            }
+        }
+        vgeometry[i]->setUseVertexBufferObjects(true);
+
+        if (m_withTexture) {
+            // 材质
+            osg::ref_ptr<osg::Material> osg_material = new osg::Material;
+            stateset->setAttribute(osg_material);
+            stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+            osg_material->setAmbient(osg::Material::FRONT_AND_BACK,
+                                     osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            osg_material->setDiffuse(osg::Material::FRONT_AND_BACK,
+                                     osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            osg_material->setEmission(osg::Material::FRONT_AND_BACK,
+                                      osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        }
+        osgUtil::SmoothingVisitor::smooth(*vgeometry[i]);
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+        geode->addDrawable(vgeometry[i]);
+        addChild(geode);
+    }
 }
 
 void Mesh::newRender() {
     m_isOrigin = false;
     updateOSGNode();
+}
+
+std::string Mesh::reTexture(osg::Matrixd vpmMatrix)
+{
+
+    auto now = std::chrono::system_clock::now();
+
+    // 转换为时间戳（以秒为单位）
+    auto now_sec = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+
+    // 计算 hash 值
+    std::hash<decltype(now_sec)> hasher;
+    auto                         hash = hasher(now_sec);
+    std::string                  texturePath = std::to_string(now_sec) + ".png";
+
+    for (auto& f : m_mesh.face) {
+        if (f.IsD()) continue;
+        for (size_t k = 0; k < 3; k++) {
+            if (f.WT(k).n() == (m_originTextureNumber - 1)) {
+                auto uvCoord =
+                    osg::Vec3(f.V(k)->P().X(), f.V(k)->P().Y(), f.V(k)->P().Z()) * vpmMatrix;
+                uvCoord[0]                        = (uvCoord[0] + 1.0f) * 0.5f;
+                uvCoord[1]                        = (uvCoord[1] + 1.0f) * 0.5f;
+                f.WT(k).u() = uvCoord[0];
+                f.WT(k).v() = uvCoord[1];
+                f.WT(k).n()                       = m_mesh.textures.size();
+            }
+            ;
+        }
+    }
+    m_mesh.textures.push_back(texturePath);
+    return texturePath;
 }

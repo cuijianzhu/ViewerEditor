@@ -291,6 +291,7 @@ void SelectingLayer::fillHole() {
                     for (size_t fi = ifbegin; fi < m_mesh->m_mesh.face.size(); fi++) {
                         auto& fff = m_mesh->m_mesh.face[fi];
                         fff.SetS();
+                        fff.SetV();
                         for (size_t k = 0; k < 3; k++) {
                             m_mesh->m_mesh.face[fi].WT(k).n() = m_mesh->m_originTextureNumber-1;
                             auto uvCoord =
