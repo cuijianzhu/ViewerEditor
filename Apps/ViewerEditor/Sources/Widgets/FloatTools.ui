@@ -321,6 +321,19 @@ QMenu::separator {
     <string>V</string>
    </property>
   </action>
+  <action name="actionEditTexture">
+   <property name="text">
+    <string>纹理编辑</string>
+   </property>
+   <property name="shortcut">
+    <string>I</string>
+   </property>
+  </action>
+  <action name="actionConfig">
+   <property name="text">
+    <string>配置</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/resources.qrc"/>

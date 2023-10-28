@@ -12,6 +12,7 @@ FloatTools::FloatTools(QWidget* parent)
     QMenu* menuFile = new QMenu(this);
     menuFile->addAction(ui->actionImport);
     menuFile->addAction(ui->actionExport);
+    menuFile->addAction(ui->actionConfig);
     ui->toolButtonFile->setMenu(menuFile);
 
     QMenu* menuView = new QMenu(this);
@@ -37,6 +38,7 @@ FloatTools::FloatTools(QWidget* parent)
     menuEdit->addAction(ui->actionPickAxes);
     menuEdit->addAction(ui->actionLassoRegion);
     menuEdit->addAction(ui->actionReTexture);
+    menuEdit->addAction(ui->actionEditTexture);
     ui->toolButtonEdit->setMenu(menuEdit);
     initConnect();
 }
