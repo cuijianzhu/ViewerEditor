@@ -161,6 +161,7 @@ void OSGViewerWidget::initConnect()
     connect(&g_globalSignal, &GLobalSignal::signal_config, [&]() {
         ConfigDialog dialog;
         dialog.exec();
+        m_psPath = dialog.m_photoshopPath;
     });
 
     connect(&g_globalSignal, &GLobalSignal::signal_showBorder, [&]() {

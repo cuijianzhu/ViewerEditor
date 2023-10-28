@@ -58,7 +58,7 @@ private:
     QRubberBand*                           m_rubberBand;
     QPoint                                 m_origin;
     bool                                   m_isPress = false;
-    std::string                            m_psPath;
+    QString                                m_psPath;
 };
 
 #endif   // OSGVIEWERWIDGET_H
