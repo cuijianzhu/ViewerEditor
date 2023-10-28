@@ -1,5 +1,6 @@
 #pragma once
 #include <osgGA/GUIEventHandler>
+#include "Mesh/Type.h"
 class SelectingLayer;
 namespace osg
 {
@@ -24,4 +25,5 @@ public:
     osg::ref_ptr<osg::Node>      m_axes;
     osg::ref_ptr<SelectingLayer> m_selectingLayer;
     float                        m_radius = 0.2;
+    std::vector<vcg::Point3f>    m_polys;
 };

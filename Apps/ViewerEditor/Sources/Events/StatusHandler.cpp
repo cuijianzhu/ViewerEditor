@@ -5,6 +5,30 @@
 #include <osg/ShapeDrawable>
 #include <osgViewer/Viewer>
 #include "Presets/Axes.h"
+
+static bool pointInPolygon(vcg::Point3f point, std::vector<vcg::Point3f> vs)
+{
+    /*
+     * ray-casting algorithm based on
+     * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     */
+
+    double x      = point.X();
+    double y      = point.Y();
+    int    length = vs.size();
+    bool   inside = false;
+    for (int i = 0, j = length - 1; i < length; j = i++) {
+        double xi = vs[j].X(), yi = vs[j].Y();
+        double xj = vs[i].X(), yj = vs[i].Y();
+
+        bool intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) {
+            inside = !inside;
+        }
+    }
+    return (inside);
+}
+
 StatusHandler::StatusHandler(osg::ref_ptr<SelectingLayer> selectingLayer)
     : m_selectingLayer(selectingLayer)
 {
@@ -97,6 +121,10 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
                 if (intersector->containsIntersections()) {
                     const osgUtil::LineSegmentIntersector::Intersection& intersection =
                         intersector->getFirstIntersection();
+                    vcg::Point3f vcgp = {(float)intersection.getLocalIntersectPoint().x(),
+                                         (float)intersection.getLocalIntersectPoint().y(),
+                                         (float)intersection.getLocalIntersectPoint().z()};
+                    m_polys.push_back(vcgp);
                     m_selectingLayer->pushBackDashWire(intersection.getWorldIntersectPoint());
                 }
             }
@@ -105,6 +133,22 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
             ea.getButton() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON) {
             isLassoRegion = false;
             m_selectingLayer->clearDashWire();
+            m_polys.push_back(m_polys[0]);
+            auto mesh = m_selectingLayer->m_mesh;
+            for (auto& f : mesh->m_mesh.face) {
+                auto center = vcg::Barycenter(f);
+                if (pointInPolygon(center, m_polys)) {
+                    continue;
+                }
+                for (size_t i = 0; i < 3; i++) {
+                    if (pointInPolygon(f.V(i)->P(), m_polys)) {
+                        break;
+                    }
+                }
+                f.SetD();
+            }
+            mesh->updateOSGNode();
+            m_polys.clear();
         }
     }
 

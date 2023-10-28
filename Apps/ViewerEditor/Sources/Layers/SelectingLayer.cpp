@@ -14,6 +14,8 @@
 #include <QString>
 #include <QFileSystemWatcher>
 #include <osg/LineStipple>
+
+
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
