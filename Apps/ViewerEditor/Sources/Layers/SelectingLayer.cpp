@@ -107,7 +107,7 @@ void SelectingLayer::initWireFrame()
     stateset->setAttributeAndModes(lineWidth,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     m_wireframe->setStateSet(stateset);
-    m_dashWireframe->addDrawable(m_geometry);
+    m_wireframe->addDrawable(m_geometry);
 }
 
 void SelectingLayer::initDashWireFrame() {

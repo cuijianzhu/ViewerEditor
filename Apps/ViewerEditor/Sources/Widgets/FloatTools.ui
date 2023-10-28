@@ -283,7 +283,7 @@ QMenu::separator {
   </action>
   <action name="actionLassoRegion">
    <property name="text">
-    <string>套索选择</string>
+    <string>边缘剪裁</string>
    </property>
    <property name="shortcut">
     <string>A</string>
