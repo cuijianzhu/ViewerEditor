@@ -70,6 +70,10 @@ void FloatTools::initConnect()
         emit g_globalSignal.signal_withTexture();
     });
 
+    connect(ui->actionEditTexture, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_editTexture();
+    });
+
     connect(ui->actionSelect, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_select(checked);
         ui->actionInvertSelect->setChecked(false);

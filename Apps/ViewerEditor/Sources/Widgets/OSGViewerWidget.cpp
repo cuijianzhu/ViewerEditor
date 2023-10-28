@@ -135,9 +135,9 @@ void OSGViewerWidget::wheelEvent(QWheelEvent* event)
     osgQOpenGLWidget::wheelEvent(event);
     if (m_statusHandler->isPressing) {
         if (event->delta() > 0)
-            m_statusHandler->m_radius *= 1.1;   // 放大
+            m_statusHandler->m_radius *= 1.3;   // 放大
         else
-            m_statusHandler->m_radius *= 0.9;   // 缩小
+            m_statusHandler->m_radius *= 0.7;   // 缩小
     }
 }
 
@@ -152,6 +152,10 @@ void OSGViewerWidget::initConnect()
         });
     connect(&g_globalSignal, &GLobalSignal::signal_pickAxes, [&]() {
         m_statusHandler->isPickAxes = true;
+    });
+
+    connect(&g_globalSignal, &GLobalSignal::signal_editTexture, [&]() {
+
     });
     connect(&g_globalSignal, &GLobalSignal::signal_showBorder, [&]() {
         m_selectingLayer->showBorder();
