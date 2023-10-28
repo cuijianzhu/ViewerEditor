@@ -170,18 +170,17 @@ void OSGViewerWidget::initConnect()
         // 创建一个文件系统监视器
          QFileSystemWatcher* watcher = new QFileSystemWatcher;
 
-        // 添加要监视的文件
-         QString filePath = QString::fromLocal8Bit(imagePath.c_str());
-         watcher->addPath(filePath);
-
-        // 连接文件系统监视器的fileChanged信号到槽函数
-         QObject::connect(watcher,
-                          &QFileSystemWatcher::fileChanged,
-                          [&](const QString& path) { m_mesh->updateOSGNode();
-        });
+        
          QString qimagePath = QString::fromLocal8Bit(imagePath.c_str());
          QString args       = m_imageDir + "/" + qimagePath;
+         // 添加要监视的文件
+         QString filePath = QString::fromLocal8Bit(imagePath.c_str());
+         watcher->addPath(args);
 
+         // 连接文件系统监视器的fileChanged信号到槽函数
+         QObject::connect(watcher, &QFileSystemWatcher::fileChanged, [&](const QString& path) {
+             m_mesh->updateOSGNode();
+         });
         QStringList arguments;
          arguments << args;
         QProcess process;
