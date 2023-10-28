@@ -365,6 +365,18 @@ void SelectingLayer::setupMesh(osg::ref_ptr<Mesh> mesh_)
     m_mesh = mesh_;
 }
 
+std::string SelectingLayer::editTexture()
+{
+    for (auto& f : m_mesh->m_mesh.face) {
+        int Tn = f.WT(0).n();
+        if (f.IsS()&&Tn>=m_mesh->m_originTextureNumber) {
+            std::string rnt = m_mesh->m_mesh.textures[f.WT(0).n()];
+            return rnt;
+        }
+    }
+    return std::string();
+}
+
 void SelectingLayer::hide() {
     setNodeMask(0x0);
 }

@@ -25,6 +25,7 @@ public:
     void               flat();
     std::string        holeTextPath();
     void               setupMesh(osg::ref_ptr<Mesh>);
+    std::string               editTexture();
 
     void               hide();
     void               show();

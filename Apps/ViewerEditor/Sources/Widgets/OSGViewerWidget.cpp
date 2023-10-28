@@ -26,13 +26,19 @@
 #include "Presets/Axes.h"
 #include "Dialog/ConfigDialog.h"
 
-
+#include  <QSettings>
+#include <QProcess>
+#include <QFileSystemWatcher>
+#include <QDir>
+#include <QFileInfo>
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
     : osgQOpenGLWidget(parent)
 {
     setMouseTracking(true);
     m_floatTools = new FloatTools(this);
-
+    QSettings settings("Soarscape", "ViewerEditor");
+    QString   psPath = settings.value("psPath").toString();
+    m_psPath         = psPath;
     initConnect();
 }
 
@@ -40,6 +46,9 @@ OSGViewerWidget::~OSGViewerWidget() {}
 
 void OSGViewerWidget::slot_import(const QString& path_)
 {
+    QFileInfo fileInfo(path_);
+    m_imageDir = fileInfo.dir().path();   // 获取文件所在目录的路径
+
     m_root->removeChild(0, m_root->getNumChildren());
     m_mesh.release();
     m_mesh           = new Mesh;
@@ -156,7 +165,30 @@ void OSGViewerWidget::initConnect()
     });
 
     connect(&g_globalSignal, &GLobalSignal::signal_editTexture, [&]() { 
+        auto imagePath = m_selectingLayer->editTexture();
 
+        // 创建一个文件系统监视器
+         QFileSystemWatcher* watcher = new QFileSystemWatcher;
+
+        // 添加要监视的文件
+         QString filePath = QString::fromLocal8Bit(imagePath.c_str());
+         watcher->addPath(filePath);
+
+        // 连接文件系统监视器的fileChanged信号到槽函数
+         QObject::connect(watcher,
+                          &QFileSystemWatcher::fileChanged,
+                          [&](const QString& path) { m_mesh->updateOSGNode();
+        });
+         QString qimagePath = QString::fromLocal8Bit(imagePath.c_str());
+         QString args       = m_imageDir + "/" + qimagePath;
+
+        QStringList arguments;
+         arguments << args;
+        QProcess process;
+        std::cout << "working space: " << m_imageDir.toLocal8Bit().constData() << std::endl;
+        std::cout << "args: " << arguments[0].toStdString() << std::endl;
+        
+        process.startDetached(m_psPath, arguments);
     });
     connect(&g_globalSignal, &GLobalSignal::signal_config, [&]() {
         ConfigDialog dialog;

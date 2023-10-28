@@ -59,6 +59,7 @@ private:
     QPoint                                 m_origin;
     bool                                   m_isPress = false;
     QString                                m_psPath;
+    QString                                m_imageDir;
 };
 
 #endif   // OSGVIEWERWIDGET_H
