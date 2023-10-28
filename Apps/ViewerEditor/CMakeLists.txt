@@ -13,8 +13,6 @@ find_package(Qt5 COMPONENTS
         Widgets
         OpenGL
         REQUIRED)
-find_package(Qt5AdvancedDocking REQUIRED HINTS "D:/ThirdParty/QtADS/lib/cmake/qt5advanceddocking")
-find_package(SARibbon REQUIRED HINTS "D:/ThirdParty/SARibbon/cmake")
 find_package(VCG REQUIRED)
 find_package(OpenSceneGraph 2.0.0 REQUIRED osgViewer osgDB osgUtil osgGA osgText)
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
@@ -53,7 +51,6 @@ Qt5::Core
 Qt5::Gui
 Qt5::Widgets
 Qt5::OpenGL
-ads::qt5advanceddocking
 Boost::system
 Boost::filesystem
 Boost::dynamic_linking
