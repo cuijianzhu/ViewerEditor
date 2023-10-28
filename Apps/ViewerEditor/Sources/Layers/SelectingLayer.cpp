@@ -13,6 +13,7 @@
 #include <vcg/complex/algorithms/refine_loop.h>
 #include <QString>
 #include <QFileSystemWatcher>
+#include <osg/LineStipple>
 SelectingLayer::SelectingLayer()
 {
     m_filled    = new osg::Geode;
@@ -122,23 +123,33 @@ void SelectingLayer::initDashWireFrame() {
 
     osg::Material* material = new osg::Material;
     material->setColorMode(osg::Material::OFF);
-    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
-    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
-    material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 0.0f, 1.0f));
+    material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 1.0f, 1.0f));
+    material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 1.0f, 1.0f));
+    material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 0.0f, 1.0f, 1.0f));
     // except emission... in which we set the color we desire
-    material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0f, 0.0f, 1.0f));
+    material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0, 1.0f, 1.0f, 1.0f));
     stateset->setAttributeAndModes(material,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
     stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
     stateset->setTextureMode(
         0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
-
+    osg::ref_ptr<osg::LineStipple> lineStipple = new osg::LineStipple;
+    lineStipple->setFactor(2);
+    lineStipple->setPattern(0xFF00);
+    stateset->setAttributeAndModes(lineStipple.get(), osg::StateAttribute::ON);
+    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+    osg::ref_ptr<osg::LineWidth> lineWidth = new osg::LineWidth(5);
+    stateset->setAttributeAndModes(lineWidth, osg::StateAttribute::ON);
+    osg::ref_ptr<osg::PolygonMode> polygonMode =
+        new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+    stateset->setAttributeAndModes(polygonMode, osg::StateAttribute::ON);
+    stateset->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
     // set line width
-    osg::LineWidth* lineWidth = new osg::LineWidth;
-    lineWidth->setWidth(2.0);
+    lineWidth->setWidth(5.0);
     stateset->setAttributeAndModes(lineWidth,
                                    osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+    stateset->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
     m_dashWireframe->setStateSet(stateset);
     m_dashWireframe->addDrawable(m_dashWireGeometry);
 }
