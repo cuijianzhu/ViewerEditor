@@ -73,11 +73,13 @@ void OSGViewerWidget::slot_pickFace(bool checked)
         m_statusHandler->m_radius          = 0.2;
         m_statusHandler->isSelecting       = true;
         m_statusHandler->isInvertSelection = false;
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
     }
     else {
         m_statusHandler->isSelecting       = false;
         m_statusHandler->isInvertSelection = false;
         m_statusHandler->removeChild();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
     }
 }
 
@@ -87,11 +89,13 @@ void OSGViewerWidget::slot_invertpickFace(bool checked)
         m_statusHandler->m_radius = 0.2;
         m_statusHandler->isSelecting       = false;
         m_statusHandler->isInvertSelection = true;
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
     }
     else {
         m_statusHandler->isSelecting = false;
         m_statusHandler->isInvertSelection = false;
         m_statusHandler->removeChild();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
     }
 }
 

@@ -136,6 +136,7 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
             m_polys.push_back(m_polys[0]);
             auto mesh = m_selectingLayer->m_mesh;
             for (auto& f : mesh->m_mesh.face) {
+                if (f.IsD()) continue;
                 auto center = vcg::Barycenter(f);
                 if (pointInPolygon(center, m_polys)) {
                     continue;
