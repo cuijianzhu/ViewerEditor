@@ -24,6 +24,7 @@
 #include "Events/StatusHandler.h"
 #include "Layers/SelectingLayer.h"
 #include "Presets/Axes.h"
+#include "Dialog/ConfigDialog.h"
 
 
 OSGViewerWidget::OSGViewerWidget(QWidget* parent)
@@ -154,9 +155,14 @@ void OSGViewerWidget::initConnect()
         m_statusHandler->isPickAxes = true;
     });
 
-    connect(&g_globalSignal, &GLobalSignal::signal_editTexture, [&]() {
+    connect(&g_globalSignal, &GLobalSignal::signal_editTexture, [&]() { 
 
     });
+    connect(&g_globalSignal, &GLobalSignal::signal_config, [&]() {
+        ConfigDialog dialog;
+        dialog.exec();
+    });
+
     connect(&g_globalSignal, &GLobalSignal::signal_showBorder, [&]() {
         m_selectingLayer->showBorder();
     });

@@ -4,6 +4,7 @@
 #include <QPoint>
 #include <osg/ref_ptr>
 #include "osgQOpenGL/osgQOpenGLWidget"
+#include <string>
 namespace osgGA {
 class CameraManipulator;
 }
@@ -57,6 +58,7 @@ private:
     QRubberBand*                           m_rubberBand;
     QPoint                                 m_origin;
     bool                                   m_isPress = false;
+    std::string                            m_psPath;
 };
 
 #endif   // OSGVIEWERWIDGET_H

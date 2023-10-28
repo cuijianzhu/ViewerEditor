@@ -26,6 +26,7 @@ Q_SIGNALS:
     void signal_lassoRegion();
     void signal_reTexture();
     void signal_editTexture();
+    void signal_config();
 
     // View
     void signal_noTexture();

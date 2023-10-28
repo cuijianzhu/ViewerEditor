@@ -70,6 +70,10 @@ void FloatTools::initConnect()
         emit g_globalSignal.signal_withTexture();
     });
 
+    connect(ui->actionConfig, &QAction::triggered, [&](bool checked) {
+        emit g_globalSignal.signal_config();
+    });
+
     connect(ui->actionEditTexture, &QAction::triggered, [&](bool checked) {
         emit g_globalSignal.signal_editTexture();
     });
