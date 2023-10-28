@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
 #include <iostream>
 #include <osg/Array>
 #include <osg/Geode>
@@ -59,6 +59,13 @@ void Mesh::read(const std::string& path_)
 void Mesh::write(const std::string& path_) {
     vcg::tri::io::Exporter<MyMesh>::Save(
         m_mesh, path_.c_str(), vcg::tri::io::Mask::IOM_WEDGTEXCOORD);
+
+    boost::filesystem::path path = path_;
+    for (size_t i = 0; i < m_mesh.textures.size(); i++) {
+        boost::filesystem::path imagePathTo = path.parent_path() / m_mesh.textures[i];
+        boost::filesystem::path imagePathFrom = boost::filesystem::path(m_rootDir) / m_mesh.textures[i];
+        boost::filesystem::copy(imagePathFrom, imagePathTo);
+    }
 }
 
 void Mesh::pickSphere(osg::Vec3 center_, float raduis_, bool isIvert)
