@@ -101,6 +101,11 @@ bool StatusHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAda
                 }
             }
         }
+        if (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE &&
+            ea.getButton() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON) {
+            isLassoRegion = false;
+            m_selectingLayer->clearDashWire();
+        }
     }
 
 

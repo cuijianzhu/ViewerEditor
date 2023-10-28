@@ -196,6 +196,9 @@ void SelectingLayer::pushBackDashWire(osg::Vec3 position_) {
 
 void SelectingLayer::clearDashWire() {
     m_dashWireVec3Array->clear();
+    m_dashWireDrawArray->setCount(0);
+    m_dashWireDrawArray->dirty();
+    m_dashWireGeometry->dirtyDisplayList();
 }
 
 void SelectingLayer::linkSelection() {
