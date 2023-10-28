@@ -203,16 +203,13 @@ void OSGViewerWidget::initConnect()
         m_statusHandler->removeChild();
         m_selectingLayer->clearSelectionRender();
 
-        m_mesh->originRender();
-        auto image   = grabFramebuffer();
         m_mesh->m_isOrigin = false;
         m_selectingLayer->flat();
         
-        auto texPath = m_selectingLayer->holeTextPath();
-        image.save(QString::fromLocal8Bit(texPath.c_str()));
-
         m_selectingLayer->clearSelection();
         m_selectingLayer->m_mesh->updateOSGNode();
+
+        emit g_globalSignal.signal_reTexture();
     });
     connect(&g_globalSignal,
             &GLobalSignal::signal_invertSelect,
