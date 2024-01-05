@@ -179,7 +179,7 @@ void SelectingLayer::updateGeometry()
     }
     m_drawArray->setCount(m_vec3Array->size());
     m_vec3Array->dirty();
-    m_geometry->dirtyDisplayList();
+    m_geometry->dirtyGLObjects();
 }
 
 void SelectingLayer::updateDashWireGeometry() {
@@ -188,7 +188,7 @@ void SelectingLayer::updateDashWireGeometry() {
     }
     m_dashWireDrawArray->setCount(m_dashWireVec3Array->size());
     m_dashWireDrawArray->dirty();
-    m_dashWireGeometry->dirtyDisplayList();
+    m_dashWireGeometry->dirtyGLObjects();
 }
 
 void SelectingLayer::pushBackDashWire(osg::Vec3 position_) {
@@ -200,7 +200,7 @@ void SelectingLayer::clearDashWire() {
     m_dashWireVec3Array->clear();
     m_dashWireDrawArray->setCount(0);
     m_dashWireDrawArray->dirty();
-    m_dashWireGeometry->dirtyDisplayList();
+    m_dashWireGeometry->dirtyGLObjects();
 }
 
 void SelectingLayer::linkSelection() {
@@ -230,7 +230,7 @@ void SelectingLayer::clearSelectionRender() {
     m_vec3Array->clear();
     m_drawArray->setCount(0);
     m_vec3Array->dirty();
-    m_geometry->dirtyDisplayList();
+    m_geometry->dirtyGLObjects();
 }
 
 void SelectingLayer::showBorder() {
